@@ -1,1 +1,1 @@
-# yts-movie-browser
+# YTS Movie Browser
