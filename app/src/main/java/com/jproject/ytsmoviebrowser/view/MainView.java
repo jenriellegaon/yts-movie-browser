@@ -1,4 +1,4 @@
-package com.jproject.ytsmoviebrowser;
+package com.jproject.ytsmoviebrowser.view;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.jproject.ytsmoviebrowser.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
