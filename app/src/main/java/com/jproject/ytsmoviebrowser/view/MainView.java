@@ -7,6 +7,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,10 +19,16 @@ import android.widget.Toast;
 
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MainContract;
+import com.jproject.ytsmoviebrowser.model.data.Movie;
 import com.jproject.ytsmoviebrowser.model.data.ResObj;
+import com.jproject.ytsmoviebrowser.presenter.adapters.PopularDownloadsAdapter;
+import com.jproject.ytsmoviebrowser.presenter.presenter.MainPresenter;
 import com.kennyc.view.MultiStateView;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +49,9 @@ public class MainView extends AppCompatActivity
     @BindView(R.id.multiStateView)
     MultiStateView state;
 
+    List<Movie> movieList = new ArrayList<>();
+    PopularDownloadsAdapter popularDownloadsAdapter;
+    MainPresenter mainPresenter;
 
 
     @Override
@@ -70,12 +81,33 @@ public class MainView extends AppCompatActivity
         onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_home));
         navigationView.setCheckedItem(R.id.nav_home);
 
+        rView.setLayoutManager(new GridLayoutManager(MainView.this, 2));
+        rView.setItemAnimator(new DefaultItemAnimator());
+        rView.setHasFixedSize(true);
+
+        popularDownloadsAdapter = new PopularDownloadsAdapter(movieList, rView, MainView.this);
+        popularDownloadsAdapter.enableFooter(false);
+        rView.setAdapter(popularDownloadsAdapter);
+        popularDownloadsAdapter.notifyDataSetChanged();
+
         swipy.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh(SwipyRefreshLayoutDirection direction) {
 
                 //On pull down
+                popularDownloadsAdapter.enableFooter(false);
+                movieList.clear();
+                mainPresenter = new MainPresenter(MainView.this);
+                mainPresenter.getPopularDownloads(getResources().getString(R.string.popular_downloads));
 
+            }
+        });
+
+        popularDownloadsAdapter.setOnBottomReachedListener(new MainContract.OnBottomReachedListener() {
+            @Override
+            public void onBottomReached(int position) {
+
+                mainPresenter.getNextPage(getResources().getString(R.string.popular_downloads));
             }
         });
 
@@ -86,6 +118,10 @@ public class MainView extends AppCompatActivity
                     public void onClick(View v) {
 
                         state.setViewState(MultiStateView.VIEW_STATE_LOADING);
+
+                        movieList.clear();
+                        mainPresenter = new MainPresenter(MainView.this);
+                        mainPresenter.getPopularDownloads(getResources().getString(R.string.popular_downloads));
 
                     }
                 });
@@ -98,11 +134,31 @@ public class MainView extends AppCompatActivity
 
     @Override
     public void showError(String error) {
-        showToast(error);
+//        showToast(error);
+        movieList.clear();
+        popularDownloadsAdapter.enableFooter(false);
+        popularDownloadsAdapter.notifyDataSetChanged();
+        state.setViewState(MultiStateView.VIEW_STATE_ERROR);
+        swipy.setRefreshing(false);
+        Log.d("RESPONSE ERROR! ", "Response error");
+
     }
 
     @Override
     public void showPopularDownloads(ResObj resObj) {
+
+        Log.d("RESULT", resObj.getStatus());
+
+        if (resObj.getStatus().equals("ok")) {
+
+            movieList.clear();
+            movieList.addAll(resObj.getData().getMovies());
+            popularDownloadsAdapter.notifyDataSetChanged();
+            swipy.setRefreshing(false);
+            Log.d("MovieList", String.valueOf(movieList));
+            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+            popularDownloadsAdapter.enableFooter(true);
+        }
 
     }
 
@@ -119,6 +175,22 @@ public class MainView extends AppCompatActivity
     @Override
     public void showThisYear(ResObj resObj) {
 
+    }
+
+    @Override
+    public void showNextPage(ResObj resObj) {
+
+        Log.d("RESULT", resObj.getStatus());
+
+        if (resObj.getStatus().equals("ok")) {
+
+            movieList.addAll(resObj.getData().getMovies());
+            popularDownloadsAdapter.notifyDataSetChanged();
+            swipy.setRefreshing(false);
+            Log.d("MovieList", String.valueOf(movieList));
+            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+            popularDownloadsAdapter.enableFooter(true);
+        }
     }
 
     @Override
@@ -161,7 +233,10 @@ public class MainView extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
+
+            mainPresenter = new MainPresenter(MainView.this);
+            mainPresenter.getPopularDownloads(getResources().getString(R.string.popular_downloads));
 
         } else if (id == R.id.nav_gallery) {
 

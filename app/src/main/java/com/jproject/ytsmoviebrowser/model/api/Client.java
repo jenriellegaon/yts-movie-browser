@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Client {
 
     public static final String BASE_URL = "https://yts.am";
+    public static final String DEFAULT = "/api/v2/list_movies.json?";
 
     public static Retrofit retrofit;
 

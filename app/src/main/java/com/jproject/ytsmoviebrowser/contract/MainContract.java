@@ -17,6 +17,8 @@ public interface MainContract {
 
         void showThisYear(ResObj resObj);
 
+        void showNextPage(ResObj resObj);
+
         void initViews();
     }
 
@@ -28,6 +30,8 @@ public interface MainContract {
         void getLatestUploads(String latestUploads);
 
         void getThisYear(String thisYear);
+
+        void getNextPage(String sort);
     }
 
     interface OnBottomReachedListener {

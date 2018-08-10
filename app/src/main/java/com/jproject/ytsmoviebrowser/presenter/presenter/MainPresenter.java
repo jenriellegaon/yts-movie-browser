@@ -18,6 +18,7 @@ public class MainPresenter implements MainContract.Calls {
 
     private String TAG = "Main Presenter";
     private MainContract.View view;
+    int page = 1;
 
     public MainPresenter(MainContract.View view) {
         this.view = view;
@@ -48,6 +49,13 @@ public class MainPresenter implements MainContract.Calls {
     @Override
     public void getThisYear(String thisYear) {
         getThisYearObservable(thisYear).subscribeWith(getThisYearObserver());
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    public void getNextPage(String sort) {
+        getNextPageObservable(sort).subscribeWith(getNextPageObserver());
+
     }
     /**********************************************************************************************/
     //CALLS
@@ -83,6 +91,17 @@ public class MainPresenter implements MainContract.Calls {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+    public Observable<ResObj> getNextPageObservable(String sort) {
+
+        //Increment page number
+        ++page;
+        return Client.getRetrofit().create(APIService.class)
+                .getNextPage(sort, page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     /**********************************************************************************************/
     //OBSERVABLES
 
@@ -203,6 +222,34 @@ public class MainPresenter implements MainContract.Calls {
         };
     }
 
+
+    public DisposableObserver<ResObj> getNextPageObserver() {
+        return new DisposableObserver<ResObj>() {
+
+            @Override
+            public void onNext(@NonNull ResObj resObj) {
+                view.showNextPage(resObj);
+                dispose();
+                getNextPageObserver().dispose();
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d(TAG, "Error" + e);
+                e.printStackTrace();
+                view.showError("Error Fetching Data");
+                dispose();
+                getNextPageObserver().dispose();
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "Completed");
+                dispose();
+                getNextPageObserver().dispose();
+            }
+        };
+    }
 
     /**********************************************************************************************/
     //OBSERVERS

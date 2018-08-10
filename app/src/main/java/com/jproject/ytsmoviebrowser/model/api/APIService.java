@@ -8,16 +8,19 @@ import retrofit2.http.Query;
 
 public interface APIService {
 
-    @GET("/api/v2/list_movies.json?")
+    @GET(Client.DEFAULT)
     Observable<ResObj> getPopularDownloads(@Query(value = "sort_by") String popularDownloads);
 
-    @GET("/api/v2/list_movies.json?")
+    @GET(Client.DEFAULT)
     Observable<ResObj> getTopRated(@Query(value = "sort_by") String topRated);
 
-    @GET("/api/v2/list_movies.json?")
+    @GET(Client.DEFAULT)
     Observable<ResObj> getLatestUploads(@Query(value = "sort_by") String latestUploads);
 
-    @GET("/api/v2/list_movies.json?")
+    @GET(Client.DEFAULT)
     Observable<ResObj> getThisYear(@Query(value = "sort_by") String thisYear);
+
+    @GET(Client.DEFAULT)
+    Observable<ResObj> getNextPage(@Query(value = "sort_by") String sort, @Query(value = "page") int page);
 
 }

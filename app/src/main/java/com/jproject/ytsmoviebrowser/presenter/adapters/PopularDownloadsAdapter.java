@@ -1,7 +1,7 @@
 package com.jproject.ytsmoviebrowser.presenter.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -41,6 +41,7 @@ public class PopularDownloadsAdapter extends RecyclerView.Adapter<RecyclerView.V
     private GridLayoutManager gridLayoutManager;
 
     private List<Movie> movieList;
+    String imageUrl;
 
     public PopularDownloadsAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
 
@@ -78,7 +79,7 @@ public class PopularDownloadsAdapter extends RecyclerView.Adapter<RecyclerView.V
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
             vh = new ImageViewHolder(itemView);
         } else {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_view, null, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer, null, false);
             vh = new ProgressViewHolder(itemView);
         }
 
@@ -91,6 +92,7 @@ public class PopularDownloadsAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (holder instanceof ProgressViewHolder) {
 
             ((ProgressViewHolder) holder).progressBar.setIndeterminate(true);
+
         } else if (movieList.size() > 0 && position < movieList.size()) {
 
             if (position == movieList.size() - 1) {
@@ -99,24 +101,25 @@ public class PopularDownloadsAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
 
             Movie movie = movieList.get(position);
+            imageUrl = movie.getLargeCoverImage();
             RequestOptions requestOptions = new RequestOptions();
 
             Glide.with(context)
-                    .asBitmap()
-                    .load(movie)
-                    .transition(BitmapTransitionOptions.withCrossFade())
+                    .asDrawable()
+                    .load(imageUrl)
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .apply(requestOptions.placeholder(R.drawable.placeholder))
                     .apply(requestOptions.error(R.drawable.placeholder_unavailable))
                     .apply(requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .listener(new RequestListener<Bitmap>() {
+                    .listener(new RequestListener<Drawable>() {
                         @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             Log.d("FAILED", e.getMessage());
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             Log.d("GLIDE", "READY");
                             return false;
                         }
