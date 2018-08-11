@@ -34,6 +34,12 @@ public interface MainContract {
         void getNextPage(String sort);
     }
 
+    interface CardClickListener {
+        void onClick(android.view.View view, int position);
+
+        void onLongClick(android.view.View view, int position);
+    }
+
     interface OnBottomReachedListener {
         void onBottomReached(int position);
     }
