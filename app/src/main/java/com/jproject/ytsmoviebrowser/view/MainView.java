@@ -184,12 +184,29 @@ public class MainView extends AppCompatActivity
 
         if (resObj.getStatus().equals("ok")) {
 
-            movieList.addAll(resObj.getData().getMovies());
-            popularDownloadsAdapter.notifyDataSetChanged();
-            swipy.setRefreshing(false);
-            Log.d("MovieList", String.valueOf(movieList));
-            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-            popularDownloadsAdapter.enableFooter(true);
+            int limit = resObj.getData().getLimit();
+            int movie_count = resObj.getData().getMovieCount();
+            int page_number = resObj.getData().getPageNumber();
+            int last_page = movie_count / limit;
+
+            Log.d("Page Number", String.valueOf(page_number));
+
+            resObj.getData().setPageNumber(last_page);
+
+            //Check if page number is equal to last page
+            if (page_number == last_page) {
+
+                Log.d("Last page reached", String.valueOf(last_page));
+                popularDownloadsAdapter.enableFooter(false);
+            } else {
+
+                movieList.addAll(resObj.getData().getMovies());
+                popularDownloadsAdapter.notifyDataSetChanged();
+                swipy.setRefreshing(false);
+                Log.d("MovieList", String.valueOf(movieList));
+                state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+                popularDownloadsAdapter.enableFooter(true);
+            }
         }
     }
 
@@ -238,7 +255,7 @@ public class MainView extends AppCompatActivity
             mainPresenter = new MainPresenter(MainView.this);
             mainPresenter.getPopularDownloads(getResources().getString(R.string.popular_downloads));
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_about) {
 
         }
 
