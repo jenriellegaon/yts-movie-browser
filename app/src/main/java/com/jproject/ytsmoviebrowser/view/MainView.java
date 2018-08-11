@@ -147,7 +147,16 @@ public class MainView extends AppCompatActivity
     @Override
     public void showPopularDownloads(ResObj resObj) {
 
+        int limit = resObj.getData().getLimit();
+        int movie_count = resObj.getData().getMovieCount();
+        int page_number = resObj.getData().getPageNumber();
+        int last_page = movie_count / limit;
+
         Log.d("RESULT", resObj.getStatus());
+        Log.d("LIMIT", String.valueOf(limit));
+        Log.d("MOVIE COUNT", String.valueOf(movie_count));
+        Log.d("PAGE NUMBER", String.valueOf(page_number));
+        Log.d("LAST PAGE", String.valueOf(last_page));
 
         if (resObj.getStatus().equals("ok")) {
 
@@ -180,18 +189,18 @@ public class MainView extends AppCompatActivity
     @Override
     public void showNextPage(ResObj resObj) {
 
+        int limit = resObj.getData().getLimit();
+        int movie_count = resObj.getData().getMovieCount();
+        int page_number = resObj.getData().getPageNumber();
+        int last_page = movie_count / limit;
+
         Log.d("RESULT", resObj.getStatus());
+        Log.d("LIMIT", String.valueOf(limit));
+        Log.d("MOVIE COUNT", String.valueOf(movie_count));
+        Log.d("PAGE NUMBER", String.valueOf(page_number));
+        Log.d("LAST PAGE", String.valueOf(last_page));
 
         if (resObj.getStatus().equals("ok")) {
-
-            int limit = resObj.getData().getLimit();
-            int movie_count = resObj.getData().getMovieCount();
-            int page_number = resObj.getData().getPageNumber();
-            int last_page = movie_count / limit;
-
-            Log.d("Page Number", String.valueOf(page_number));
-
-            resObj.getData().setPageNumber(last_page);
 
             //Check if page number is equal to last page
             if (page_number == last_page) {
