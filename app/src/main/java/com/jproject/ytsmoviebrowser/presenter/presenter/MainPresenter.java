@@ -11,6 +11,7 @@ import com.jproject.ytsmoviebrowser.model.data.ResObj;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -18,6 +19,8 @@ public class MainPresenter implements MainContract.Calls {
 
     private String TAG = "Main Presenter";
     private MainContract.View view;
+    private CompositeDisposable disposable = new CompositeDisposable();
+
     int page = 1;
 
     public MainPresenter(MainContract.View view) {
@@ -25,48 +28,57 @@ public class MainPresenter implements MainContract.Calls {
     }
 
     //CALLS
-
     /**********************************************************************************************/
     @SuppressLint("CheckResult")
     @Override
-    public void getPopularDownloads(String popularDownloads) {
-        getPopularDownloadsObservable(popularDownloads).subscribeWith(getPopularDownloadsObserver());
+    public void getTopDownloads(String topDownloads) {
+//        getPopularDownloadsObservable(popularDownloads).subscribeWith(getPopularDownloadsObserver());
+
+        disposable.add(getTopDownloadsObservable(topDownloads).subscribeWith(getTopDownloadsObserver()));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getTopRated(String topRated) {
-        getTopRatedObservable(topRated).subscribeWith(getTopRatedObserver());
+//        getTopRatedObservable(topRated).subscribeWith(getTopRatedObserver());
+
+        disposable.add(getTopRatedObservable(topRated).subscribeWith(getTopRatedObserver()));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getLatestUploads(String latestUploads) {
-        getLatestUploadsObservable(latestUploads).subscribeWith(getLatestUploadsObserver());
+//        getLatestUploadsObservable(latestUploads).subscribeWith(getLatestUploadsObserver());
+        disposable.add(getLatestUploadsObservable(latestUploads).subscribeWith(getLatestUploadsObserver()));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getThisYear(String thisYear) {
-        getThisYearObservable(thisYear).subscribeWith(getThisYearObserver());
+//        getThisYearObservable(thisYear).subscribeWith(getThisYearObserver());
+        disposable.add(getThisYearObservable(thisYear).subscribeWith(getThisYearObserver()));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getNextPage(String sort) {
         getNextPageObservable(sort).subscribeWith(getNextPageObserver());
+    }
 
+    @Override
+    public void detachAll() {
+        disposable.clear();
     }
     /**********************************************************************************************/
     //CALLS
 
 
-    //OBSERVABLES
 
+    //OBSERVABLES
     /**********************************************************************************************/
-    public Observable<ResObj> getPopularDownloadsObservable(String popularDownloads) {
+    public Observable<ResObj> getTopDownloadsObservable(String topDownloads) {
         return Client.getRetrofit().create(APIService.class)
-                .getPopularDownloads(popularDownloads)
+                .getTopDownloads(topDownloads)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -101,23 +113,18 @@ public class MainPresenter implements MainContract.Calls {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-
     /**********************************************************************************************/
     //OBSERVABLES
 
 
     //OBSERVERS
-
     /**********************************************************************************************/
-
-    public DisposableObserver<ResObj> getPopularDownloadsObserver() {
+    public DisposableObserver<ResObj> getTopDownloadsObserver() {
         return new DisposableObserver<ResObj>() {
 
             @Override
             public void onNext(@NonNull ResObj resObj) {
-                view.showPopularDownloads(resObj);
-                dispose();
-                getPopularDownloadsObserver().dispose();
+                view.showTopDownloads(resObj);
             }
 
             @Override
@@ -125,15 +132,17 @@ public class MainPresenter implements MainContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                dispose();
-                getPopularDownloadsObserver().dispose();
+                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                dispose();
-                getPopularDownloadsObserver().dispose();
+                disposable.clear();
+                if (isDisposed()) {
+                    Log.d("POPULAR OBSERVER", "DISPOSED");
+                }
+
             }
         };
     }
@@ -144,8 +153,6 @@ public class MainPresenter implements MainContract.Calls {
             @Override
             public void onNext(@NonNull ResObj resObj) {
                 view.showTopRated(resObj);
-                dispose();
-                getTopRatedObserver().dispose();
             }
 
             @Override
@@ -153,15 +160,16 @@ public class MainPresenter implements MainContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                dispose();
-                getTopRatedObserver().dispose();
+                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                dispose();
-                getTopRatedObserver().dispose();
+                disposable.clear();
+                if (isDisposed()) {
+                    Log.d("TOP RATED OBSERVER", "DISPOSED");
+                }
             }
         };
     }
@@ -172,8 +180,6 @@ public class MainPresenter implements MainContract.Calls {
             @Override
             public void onNext(@NonNull ResObj resObj) {
                 view.showLatestUploads(resObj);
-                dispose();
-                getLatestUploadsObserver().dispose();
             }
 
             @Override
@@ -181,15 +187,16 @@ public class MainPresenter implements MainContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                dispose();
-                getLatestUploadsObserver().dispose();
+                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                dispose();
-                getLatestUploadsObserver().dispose();
+                disposable.clear();
+                if (isDisposed()) {
+                    Log.d("LATEST UPLOADS OBSERVER", "DISPOSED");
+                }
             }
         };
     }
@@ -200,8 +207,6 @@ public class MainPresenter implements MainContract.Calls {
             @Override
             public void onNext(@NonNull ResObj resObj) {
                 view.showThisYear(resObj);
-                dispose();
-                getThisYearObserver().dispose();
             }
 
             @Override
@@ -209,15 +214,17 @@ public class MainPresenter implements MainContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                dispose();
-                getThisYearObserver().dispose();
+                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                dispose();
-                getThisYearObserver().dispose();
+                disposable.clear();
+                if (isDisposed()) {
+                    Log.d("THIS YEAR OBSERVER", "DISPOSED");
+                }
+
             }
         };
     }
@@ -229,8 +236,6 @@ public class MainPresenter implements MainContract.Calls {
             @Override
             public void onNext(@NonNull ResObj resObj) {
                 view.showNextPage(resObj);
-                dispose();
-                getNextPageObserver().dispose();
             }
 
             @Override
@@ -250,7 +255,6 @@ public class MainPresenter implements MainContract.Calls {
             }
         };
     }
-
     /**********************************************************************************************/
     //OBSERVERS
 }

@@ -1,5 +1,6 @@
 package com.jproject.ytsmoviebrowser.view;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -7,8 +8,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,12 +20,11 @@ import android.widget.Toast;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MainContract;
 import com.jproject.ytsmoviebrowser.model.data.Movie;
+import com.jproject.ytsmoviebrowser.model.data.MovieDataModel;
 import com.jproject.ytsmoviebrowser.model.data.ResObj;
-import com.jproject.ytsmoviebrowser.presenter.adapters.PopularDownloadsAdapter;
+import com.jproject.ytsmoviebrowser.presenter.adapters.MovieDataAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.MainPresenter;
 import com.kennyc.view.MultiStateView;
-import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
-import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,17 +41,18 @@ public class MainView extends AppCompatActivity
     NavigationView navigationView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.swipy)
-    SwipyRefreshLayout swipy;
-    @BindView(R.id.rv)
+    //    @BindView(R.id.swipy)
+//    SwipyRefreshLayout swipy;
+    @BindView(R.id.recycler)
     RecyclerView rView;
     @BindView(R.id.multiStateView)
     MultiStateView state;
 
-    List<Movie> movieList = new ArrayList<>();
-    PopularDownloadsAdapter popularDownloadsAdapter;
     MainPresenter mainPresenter;
-
+    ArrayList<MovieDataModel> movieDataModel;
+    MovieDataModel pddm;
+    List<Movie> movieData;
+    MovieDataAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,39 +77,17 @@ public class MainView extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        movieDataModel = new ArrayList<>();
+//        topRatedDataModel = new ArrayList<>();
+
         navigationView.setNavigationItemSelectedListener(this);
         onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_home));
         navigationView.setCheckedItem(R.id.nav_home);
 
-        rView.setLayoutManager(new GridLayoutManager(MainView.this, 2));
-        rView.setItemAnimator(new DefaultItemAnimator());
         rView.setHasFixedSize(true);
-
-        popularDownloadsAdapter = new PopularDownloadsAdapter(movieList, rView, MainView.this);
-        popularDownloadsAdapter.enableFooter(false);
-        rView.setAdapter(popularDownloadsAdapter);
-        popularDownloadsAdapter.notifyDataSetChanged();
-
-        swipy.setOnRefreshListener(new SwipyRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh(SwipyRefreshLayoutDirection direction) {
-
-                //On pull down
-                popularDownloadsAdapter.enableFooter(false);
-                movieList.clear();
-                mainPresenter = new MainPresenter(MainView.this);
-                mainPresenter.getPopularDownloads(getResources().getString(R.string.popular_downloads));
-
-            }
-        });
-
-        popularDownloadsAdapter.setOnBottomReachedListener(new MainContract.OnBottomReachedListener() {
-            @Override
-            public void onBottomReached(int position) {
-
-                mainPresenter.getNextPage(getResources().getString(R.string.popular_downloads));
-            }
-        });
+        adapter = new MovieDataAdapter(movieDataModel, this);
+        rView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rView.setAdapter(adapter);
 
         state.setStateListener(this);
         state.getView(MultiStateView.VIEW_STATE_ERROR).findViewById(R.id.retry)
@@ -119,12 +97,22 @@ public class MainView extends AppCompatActivity
 
                         state.setViewState(MultiStateView.VIEW_STATE_LOADING);
 
-                        movieList.clear();
-                        mainPresenter = new MainPresenter(MainView.this);
-                        mainPresenter.getPopularDownloads(getResources().getString(R.string.popular_downloads));
+                        movieDataModel.clear();
+//                        mainPresenter = new MainPresenter(MainView.this);
+//                        mainPresenter.getPopularDownloads("download_count");
+
+                        Intent reload = new Intent(MainView.this, MainView.class);
+                        startActivity(reload);
+                        finish();
 
                     }
                 });
+
+        if (state.getViewState() == 1) {
+
+            mainPresenter = new MainPresenter(this);
+            mainPresenter.detachAll();
+        }
     }
 
     @Override
@@ -134,18 +122,17 @@ public class MainView extends AppCompatActivity
 
     @Override
     public void showError(String error) {
-//        showToast(error);
-        movieList.clear();
-        popularDownloadsAdapter.enableFooter(false);
-        popularDownloadsAdapter.notifyDataSetChanged();
+
         state.setViewState(MultiStateView.VIEW_STATE_ERROR);
-        swipy.setRefreshing(false);
+        mainPresenter = new MainPresenter(this);
+        mainPresenter.detachAll();
+
         Log.d("RESPONSE ERROR! ", "Response error");
 
     }
 
     @Override
-    public void showPopularDownloads(ResObj resObj) {
+    public void showTopDownloads(ResObj resObj) {
 
         int limit = resObj.getData().getLimit();
         int movie_count = resObj.getData().getMovieCount();
@@ -160,13 +147,23 @@ public class MainView extends AppCompatActivity
 
         if (resObj.getStatus().equals("ok")) {
 
-            movieList.clear();
-            movieList.addAll(resObj.getData().getMovies());
-            popularDownloadsAdapter.notifyDataSetChanged();
-            swipy.setRefreshing(false);
-            Log.d("MovieList", String.valueOf(movieList));
+            pddm = new MovieDataModel();
+            pddm.setHeaderTitle("Top Downloads");
+
+            movieData = new ArrayList<>();
+            movieData.addAll(resObj.getData().getMovies());
+            adapter.notifyDataSetChanged();
+
+            pddm.setMovieList(movieData);
+            movieDataModel.add(pddm);
+
+            mainPresenter = new MainPresenter(this);
+            mainPresenter.getThisYear("year");
+
+            Log.d("TOP DOWNLOADS", "READY");
+
             state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-            popularDownloadsAdapter.enableFooter(true);
+
         }
 
     }
@@ -174,20 +171,43 @@ public class MainView extends AppCompatActivity
     @Override
     public void showTopRated(ResObj resObj) {
 
+        int limit = resObj.getData().getLimit();
+        int movie_count = resObj.getData().getMovieCount();
+        int page_number = resObj.getData().getPageNumber();
+        int last_page = movie_count / limit;
+
+        Log.d("RESULT", resObj.getStatus());
+        Log.d("LIMIT", String.valueOf(limit));
+        Log.d("MOVIE COUNT", String.valueOf(movie_count));
+        Log.d("PAGE NUMBER", String.valueOf(page_number));
+        Log.d("LAST PAGE", String.valueOf(last_page));
+
+        if (resObj.getStatus().equals("ok")) {
+
+            pddm = new MovieDataModel();
+            pddm.setHeaderTitle("Top Rated");
+
+            movieData = new ArrayList<>();
+            movieData.addAll(resObj.getData().getMovies());
+            adapter.notifyDataSetChanged();
+
+            pddm.setMovieList(movieData);
+            movieDataModel.add(pddm);
+
+
+            Log.d("TOP RATED", "READY");
+
+            mainPresenter = new MainPresenter(this);
+            mainPresenter.getTopDownloads("download_count");
+
+            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+
+        }
+
     }
 
     @Override
     public void showLatestUploads(ResObj resObj) {
-
-    }
-
-    @Override
-    public void showThisYear(ResObj resObj) {
-
-    }
-
-    @Override
-    public void showNextPage(ResObj resObj) {
 
         int limit = resObj.getData().getLimit();
         int movie_count = resObj.getData().getMovieCount();
@@ -202,21 +222,86 @@ public class MainView extends AppCompatActivity
 
         if (resObj.getStatus().equals("ok")) {
 
-            //Check if page number is equal to last page
-            if (page_number == last_page) {
+            pddm = new MovieDataModel();
+            pddm.setHeaderTitle("Latest Uploads");
 
-                Log.d("Last page reached", String.valueOf(last_page));
-                popularDownloadsAdapter.enableFooter(false);
-            } else {
+            movieData = new ArrayList<>();
+            movieData.addAll(resObj.getData().getMovies());
+            adapter.notifyDataSetChanged();
 
-                movieList.addAll(resObj.getData().getMovies());
-                popularDownloadsAdapter.notifyDataSetChanged();
-                swipy.setRefreshing(false);
-                Log.d("MovieList", String.valueOf(movieList));
-                state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-                popularDownloadsAdapter.enableFooter(true);
-            }
+            pddm.setMovieList(movieData);
+            movieDataModel.add(pddm);
+
+            mainPresenter = new MainPresenter(this);
+            mainPresenter.getTopRated("rating");
+
+            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+
         }
+    }
+
+    @Override
+    public void showThisYear(ResObj resObj) {
+
+        int limit = resObj.getData().getLimit();
+        int movie_count = resObj.getData().getMovieCount();
+        int page_number = resObj.getData().getPageNumber();
+        int last_page = movie_count / limit;
+
+        Log.d("RESULT", resObj.getStatus());
+        Log.d("LIMIT", String.valueOf(limit));
+        Log.d("MOVIE COUNT", String.valueOf(movie_count));
+        Log.d("PAGE NUMBER", String.valueOf(page_number));
+        Log.d("LAST PAGE", String.valueOf(last_page));
+
+        if (resObj.getStatus().equals("ok")) {
+
+            pddm = new MovieDataModel();
+            pddm.setHeaderTitle("This Year");
+
+            movieData = new ArrayList<>();
+            movieData.addAll(resObj.getData().getMovies());
+            adapter.notifyDataSetChanged();
+
+            pddm.setMovieList(movieData);
+            movieDataModel.add(pddm);
+
+            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+
+        }
+
+    }
+
+    @Override
+    public void showNextPage(ResObj resObj) {
+
+//        int limit = resObj.getData().getLimit();
+//        int movie_count = resObj.getData().getMovieCount();
+//        int page_number = resObj.getData().getPageNumber();
+//        int last_page = movie_count / limit;
+//
+//        Log.d("RESULT", resObj.getStatus());
+//        Log.d("LIMIT", String.valueOf(limit));
+//        Log.d("MOVIE COUNT", String.valueOf(movie_count));
+//        Log.d("PAGE NUMBER", String.valueOf(page_number));
+//        Log.d("LAST PAGE", String.valueOf(last_page));
+//
+//        if (resObj.getStatus().equals("ok")) {
+//
+//            //Check if page number is equal to last page
+//            if (page_number == last_page) {
+//
+//                Log.d("Last page reached", String.valueOf(last_page));
+//                popularDownloadsAdapter.enableFooter(false);
+//            } else {
+//
+//                movieList.addAll(resObj.getData().getMovies());
+//                popularDownloadsAdapter.notifyDataSetChanged();
+//                swipy.setRefreshing(false);
+//                state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+//                popularDownloadsAdapter.enableFooter(true);
+//            }
+//        }
     }
 
     @Override
@@ -261,8 +346,9 @@ public class MainView extends AppCompatActivity
 
         if (id == R.id.nav_home) {
 
-            mainPresenter = new MainPresenter(MainView.this);
-            mainPresenter.getPopularDownloads(getResources().getString(R.string.popular_downloads));
+            mainPresenter = new MainPresenter(this);
+            mainPresenter.getLatestUploads("date_added");
+
 
         } else if (id == R.id.nav_about) {
 

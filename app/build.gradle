@@ -55,4 +55,7 @@ dependencies {
 
     //MATERIAL DIALOG
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+
+    //SNAPHELPER
+    implementation 'com.github.rubensousa:gravitysnaphelper:1.3'
 }

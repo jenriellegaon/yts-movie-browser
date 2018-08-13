@@ -9,6 +9,7 @@ public class Client {
 
     public static final String BASE_URL = "https://yts.am";
     public static final String DEFAULT = "/api/v2/list_movies.json?";
+    public static final String DEFAULT_LIMITED = "/api/v2/list_movies.json?&limit=5";
 
     public static Retrofit retrofit;
 
