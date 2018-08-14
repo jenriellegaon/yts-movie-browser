@@ -6,7 +6,7 @@ import android.util.Log;
 import com.jproject.ytsmoviebrowser.contract.MainContract;
 import com.jproject.ytsmoviebrowser.model.api.APIService;
 import com.jproject.ytsmoviebrowser.model.api.Client;
-import com.jproject.ytsmoviebrowser.model.data.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.list.ResObj;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;

@@ -19,7 +19,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.model.data.Movie;
+import com.jproject.ytsmoviebrowser.model.data.list.Movie;
 
 import java.util.List;
 
@@ -91,6 +91,7 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
             super(itemView);
 
             this.itemImage = itemView.findViewById(R.id.itemImage);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

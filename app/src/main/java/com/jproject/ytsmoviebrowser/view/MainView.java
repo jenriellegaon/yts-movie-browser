@@ -1,6 +1,5 @@
 package com.jproject.ytsmoviebrowser.view;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,9 +18,9 @@ import android.widget.Toast;
 
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MainContract;
-import com.jproject.ytsmoviebrowser.model.data.Movie;
-import com.jproject.ytsmoviebrowser.model.data.MovieDataModel;
-import com.jproject.ytsmoviebrowser.model.data.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.list.Movie;
+import com.jproject.ytsmoviebrowser.model.data.list.MovieDataModel;
+import com.jproject.ytsmoviebrowser.model.data.list.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.MovieDataAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.MainPresenter;
 import com.kennyc.view.MultiStateView;
@@ -97,13 +96,6 @@ public class MainView extends AppCompatActivity
 
                         state.setViewState(MultiStateView.VIEW_STATE_LOADING);
 
-                        movieDataModel.clear();
-//                        mainPresenter = new MainPresenter(MainView.this);
-//                        mainPresenter.getPopularDownloads("download_count");
-
-                        Intent reload = new Intent(MainView.this, MainView.class);
-                        startActivity(reload);
-                        finish();
 
                     }
                 });
@@ -162,7 +154,7 @@ public class MainView extends AppCompatActivity
 
             Log.d("TOP DOWNLOADS", "READY");
 
-            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+//            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
 
         }
 
@@ -200,7 +192,7 @@ public class MainView extends AppCompatActivity
             mainPresenter = new MainPresenter(this);
             mainPresenter.getTopDownloads("download_count");
 
-            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+//            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
 
         }
 
@@ -235,7 +227,7 @@ public class MainView extends AppCompatActivity
             mainPresenter = new MainPresenter(this);
             mainPresenter.getTopRated("rating");
 
-            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+//            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
 
         }
     }
@@ -338,6 +330,7 @@ public class MainView extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -346,9 +339,10 @@ public class MainView extends AppCompatActivity
 
         if (id == R.id.nav_home) {
 
+            //Loads Sectioned Movies
+            movieDataModel.clear();
             mainPresenter = new MainPresenter(this);
             mainPresenter.getLatestUploads("date_added");
-
 
         } else if (id == R.id.nav_about) {
 

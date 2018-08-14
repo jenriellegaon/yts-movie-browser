@@ -1,6 +1,6 @@
 package com.jproject.ytsmoviebrowser.contract;
 
-import com.jproject.ytsmoviebrowser.model.data.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.list.ResObj;
 
 public interface MainContract {
 
@@ -33,6 +33,10 @@ public interface MainContract {
 
     interface OnBottomReachedListener {
         void onBottomReached(int position);
+    }
+
+    interface ItemImageClickListener {
+        void onClick();
     }
 
 

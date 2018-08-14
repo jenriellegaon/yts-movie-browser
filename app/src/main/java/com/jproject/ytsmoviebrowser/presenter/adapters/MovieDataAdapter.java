@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.model.data.MovieDataModel;
+import com.jproject.ytsmoviebrowser.model.data.list.MovieDataModel;
 
 import java.util.List;
 

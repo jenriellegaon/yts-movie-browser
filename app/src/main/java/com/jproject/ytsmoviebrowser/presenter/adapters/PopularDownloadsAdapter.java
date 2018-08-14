@@ -22,7 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MainContract;
-import com.jproject.ytsmoviebrowser.model.data.Movie;
+import com.jproject.ytsmoviebrowser.model.data.list.Movie;
 
 import java.util.List;
 
