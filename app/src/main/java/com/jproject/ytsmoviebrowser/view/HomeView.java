@@ -11,17 +11,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.contract.MainContract;
-import com.jproject.ytsmoviebrowser.model.data.list.Movie;
-import com.jproject.ytsmoviebrowser.model.data.list.MovieDataModel;
-import com.jproject.ytsmoviebrowser.model.data.list.ResObj;
+import com.jproject.ytsmoviebrowser.contract.HomeContract;
+import com.jproject.ytsmoviebrowser.model.data.home.Movie;
+import com.jproject.ytsmoviebrowser.model.data.home.MovieDataModel;
+import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.MovieDataAdapter;
-import com.jproject.ytsmoviebrowser.presenter.presenter.MainPresenter;
+import com.jproject.ytsmoviebrowser.presenter.presenter.HomePresenter;
 import com.kennyc.view.MultiStateView;
 
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainView extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MainContract.View, MultiStateView.StateListener {
+public class HomeView extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, HomeContract.View, MultiStateView.StateListener {
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
@@ -46,7 +45,7 @@ public class MainView extends AppCompatActivity
     @BindView(R.id.multiStateView)
     MultiStateView state;
 
-    MainPresenter mainPresenter;
+    HomePresenter homePresenter;
     ArrayList<MovieDataModel> movieDataModel;
     MovieDataModel pddm;
     List<Movie> movieData;
@@ -55,7 +54,7 @@ public class MainView extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_view);
+        setContentView(R.layout.home_view);
 
         //Bind views
         ButterKnife.bind(this);
@@ -101,8 +100,8 @@ public class MainView extends AppCompatActivity
 
         if (state.getViewState() == 1) {
 
-            mainPresenter = new MainPresenter(this);
-            mainPresenter.detachAll();
+            homePresenter = new HomePresenter(this);
+            homePresenter.detachAll();
         }
     }
 
@@ -110,8 +109,8 @@ public class MainView extends AppCompatActivity
     public void showError(String error) {
 
         state.setViewState(MultiStateView.VIEW_STATE_ERROR);
-        mainPresenter = new MainPresenter(this);
-        mainPresenter.detachAll();
+        homePresenter = new HomePresenter(this);
+        homePresenter.detachAll();
 
         Log.d("RESPONSE ERROR! ", "Response error");
 
@@ -143,8 +142,8 @@ public class MainView extends AppCompatActivity
             pddm.setMovieList(movieData);
             movieDataModel.add(pddm);
 
-            mainPresenter = new MainPresenter(this);
-            mainPresenter.getThisYear("year");
+            homePresenter = new HomePresenter(this);
+            homePresenter.getThisYear("year");
 
             Log.d("TOP DOWNLOADS", "READY");
 
@@ -182,8 +181,8 @@ public class MainView extends AppCompatActivity
 
             Log.d("TOP RATED", "READY");
 
-            mainPresenter = new MainPresenter(this);
-            mainPresenter.getTopDownloads("download_count");
+            homePresenter = new HomePresenter(this);
+            homePresenter.getTopDownloads("download_count");
 
         }
 
@@ -215,8 +214,8 @@ public class MainView extends AppCompatActivity
             pddm.setMovieList(movieData);
             movieDataModel.add(pddm);
 
-            mainPresenter = new MainPresenter(this);
-            mainPresenter.getTopRated("rating");
+            homePresenter = new HomePresenter(this);
+            homePresenter.getTopRated("rating");
 
         }
     }
@@ -255,7 +254,7 @@ public class MainView extends AppCompatActivity
 
     @Override
     public void onStateChanged(@MultiStateView.ViewState int viewState) {
-        Log.v("MainView", " View State: " + viewState);
+        Log.v("HomeView", " View State: " + viewState);
     }
 
     @Override
@@ -268,24 +267,24 @@ public class MainView extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.details_menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -298,8 +297,8 @@ public class MainView extends AppCompatActivity
 
             //Loads Sectioned Movies
             movieDataModel.clear();
-            mainPresenter = new MainPresenter(this);
-            mainPresenter.getLatestUploads("date_added");
+            homePresenter = new HomePresenter(this);
+            homePresenter.getLatestUploads("date_added");
 
         } else if (id == R.id.nav_about) {
 

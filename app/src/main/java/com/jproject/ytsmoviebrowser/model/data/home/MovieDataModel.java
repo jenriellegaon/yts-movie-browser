@@ -1,4 +1,4 @@
-package com.jproject.ytsmoviebrowser.model.data.list;
+package com.jproject.ytsmoviebrowser.model.data.home;
 
 import java.util.List;
 

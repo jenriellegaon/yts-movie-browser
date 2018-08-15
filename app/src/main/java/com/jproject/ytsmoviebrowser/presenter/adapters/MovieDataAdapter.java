@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.model.data.list.MovieDataModel;
+import com.jproject.ytsmoviebrowser.model.data.home.MovieDataModel;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class MovieDataAdapter extends RecyclerView.Adapter<MovieDataAdapter.Item
 
     @Override
     public ItemRowHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_list_item, null);
         ItemRowHolder rowHolder = new ItemRowHolder(v);
         snapHelper = new GravitySnapHelper(Gravity.START);
         return rowHolder;

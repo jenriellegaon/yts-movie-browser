@@ -22,7 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.DetailsContract;
-import com.jproject.ytsmoviebrowser.model.data.list.Movie;
+import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 
 import java.util.List;
 
@@ -76,10 +76,10 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (viewType == VIEW_TYPE_ITEM) {
 
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.details_card_item, parent, false);
             vh = new ImageViewHolder(itemView);
         } else {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.footer, null, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.details_footer, null, false);
             vh = new ProgressViewHolder(itemView);
         }
 

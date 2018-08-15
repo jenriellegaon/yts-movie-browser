@@ -1,4 +1,4 @@
-package com.jproject.ytsmoviebrowser.model.data.list;
+package com.jproject.ytsmoviebrowser.model.data.home;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

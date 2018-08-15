@@ -1,8 +1,8 @@
-package com.jproject.ytsmoviebrowser.model.data.single;
+package com.jproject.ytsmoviebrowser.model.data.details;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.jproject.ytsmoviebrowser.model.data.list.Movie;
+import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 
 public class Data {
 

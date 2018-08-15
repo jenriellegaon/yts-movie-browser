@@ -1,8 +1,8 @@
 package com.jproject.ytsmoviebrowser.contract;
 
-import com.jproject.ytsmoviebrowser.model.data.list.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 
-public interface MainContract {
+public interface HomeContract {
 
     interface View {
         void showError(String error);

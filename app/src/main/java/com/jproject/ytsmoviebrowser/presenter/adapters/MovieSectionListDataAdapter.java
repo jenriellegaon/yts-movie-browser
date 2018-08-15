@@ -19,7 +19,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.model.data.list.Movie;
+import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
 
     @Override
     public SingleItemRowHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_single_card, null);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_card_item, null);
         SingleItemRowHolder singleItemRowHolder = new SingleItemRowHolder(v);
         return singleItemRowHolder;
     }

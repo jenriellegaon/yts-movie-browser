@@ -1,6 +1,6 @@
 package com.jproject.ytsmoviebrowser.contract;
 
-import com.jproject.ytsmoviebrowser.model.data.single.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
 
 public interface DetailsContract {
 

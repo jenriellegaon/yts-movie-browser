@@ -3,10 +3,10 @@ package com.jproject.ytsmoviebrowser.presenter.presenter;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.jproject.ytsmoviebrowser.contract.MainContract;
+import com.jproject.ytsmoviebrowser.contract.HomeContract;
 import com.jproject.ytsmoviebrowser.model.api.APIService;
 import com.jproject.ytsmoviebrowser.model.api.Client;
-import com.jproject.ytsmoviebrowser.model.data.list.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -15,13 +15,13 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainPresenter implements MainContract.Calls {
+public class HomePresenter implements HomeContract.Calls {
 
     private String TAG = "Main Presenter";
-    private MainContract.View view;
+    private HomeContract.View view;
     private CompositeDisposable disposable = new CompositeDisposable();
 
-    public MainPresenter(MainContract.View view) {
+    public HomePresenter(HomeContract.View view) {
         this.view = view;
     }
 
