@@ -1,9 +1,9 @@
 package com.jproject.ytsmoviebrowser.contract;
 
-import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 
 
-public interface DetailsContract {
+public interface GenreContract {
 
     interface View {
         void initViews();
@@ -12,7 +12,7 @@ public interface DetailsContract {
 
         void showError(String error);
 
-        void showMovieDetails(ResObj resObj);
+        void showMoviesByGenre(ResObj resObj);
 
         void showNextPage(ResObj resObj);
     }

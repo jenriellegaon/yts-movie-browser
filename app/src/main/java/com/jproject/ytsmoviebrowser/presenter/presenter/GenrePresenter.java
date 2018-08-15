@@ -2,10 +2,10 @@ package com.jproject.ytsmoviebrowser.presenter.presenter;
 
 import android.util.Log;
 
-import com.jproject.ytsmoviebrowser.contract.DetailsContract;
+import com.jproject.ytsmoviebrowser.contract.GenreContract;
 import com.jproject.ytsmoviebrowser.model.api.APIService;
 import com.jproject.ytsmoviebrowser.model.api.Client;
-import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -14,14 +14,14 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class DetailsPresenter implements DetailsContract.Calls {
+public class GenrePresenter implements GenreContract.Calls {
 
     int page = 1;
     private String TAG = "Details Presenter";
-    private DetailsContract.View view;
+    private GenreContract.View view;
     private CompositeDisposable disposable = new CompositeDisposable();
 
-    public DetailsPresenter(DetailsContract.View view) {
+    public GenrePresenter(GenreContract.View view) {
         this.view = view;
     }
 
@@ -70,7 +70,7 @@ public class DetailsPresenter implements DetailsContract.Calls {
 
             @Override
             public void onNext(@NonNull ResObj resObj) {
-                view.showMovieDetails(resObj);
+                view.showMoviesByGenre(resObj);
             }
 
             @Override

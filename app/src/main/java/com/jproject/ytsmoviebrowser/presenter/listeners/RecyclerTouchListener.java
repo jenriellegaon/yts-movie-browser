@@ -6,14 +6,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.jproject.ytsmoviebrowser.contract.DetailsContract;
+import com.jproject.ytsmoviebrowser.contract.GenreContract;
 
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
     private GestureDetector gestureDetector;
-    private DetailsContract.CardClickListener cardClickListener;
+    private GenreContract.CardClickListener cardClickListener;
 
-    public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final DetailsContract.CardClickListener cardClickListener) {
+    public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final GenreContract.CardClickListener cardClickListener) {
         this.cardClickListener = cardClickListener;
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
