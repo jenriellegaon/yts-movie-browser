@@ -21,8 +21,6 @@ public class MainPresenter implements MainContract.Calls {
     private MainContract.View view;
     private CompositeDisposable disposable = new CompositeDisposable();
 
-    int page = 1;
-
     public MainPresenter(MainContract.View view) {
         this.view = view;
     }
@@ -32,37 +30,25 @@ public class MainPresenter implements MainContract.Calls {
     @SuppressLint("CheckResult")
     @Override
     public void getTopDownloads(String topDownloads) {
-//        getPopularDownloadsObservable(popularDownloads).subscribeWith(getPopularDownloadsObserver());
-
         disposable.add(getTopDownloadsObservable(topDownloads).subscribeWith(getTopDownloadsObserver()));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getTopRated(String topRated) {
-//        getTopRatedObservable(topRated).subscribeWith(getTopRatedObserver());
-
         disposable.add(getTopRatedObservable(topRated).subscribeWith(getTopRatedObserver()));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getLatestUploads(String latestUploads) {
-//        getLatestUploadsObservable(latestUploads).subscribeWith(getLatestUploadsObserver());
         disposable.add(getLatestUploadsObservable(latestUploads).subscribeWith(getLatestUploadsObserver()));
     }
 
     @SuppressLint("CheckResult")
     @Override
     public void getThisYear(String thisYear) {
-//        getThisYearObservable(thisYear).subscribeWith(getThisYearObserver());
         disposable.add(getThisYearObservable(thisYear).subscribeWith(getThisYearObserver()));
-    }
-
-    @SuppressLint("CheckResult")
-    @Override
-    public void getNextPage(String sort) {
-        getNextPageObservable(sort).subscribeWith(getNextPageObserver());
     }
 
     @Override
@@ -71,7 +57,6 @@ public class MainPresenter implements MainContract.Calls {
     }
     /**********************************************************************************************/
     //CALLS
-
 
 
     //OBSERVABLES
@@ -100,16 +85,6 @@ public class MainPresenter implements MainContract.Calls {
     public Observable<ResObj> getThisYearObservable(String thisYear) {
         return Client.getRetrofit().create(APIService.class)
                 .getThisYear(thisYear)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Observable<ResObj> getNextPageObservable(String sort) {
-
-        //Increment page number
-        ++page;
-        return Client.getRetrofit().create(APIService.class)
-                .getNextPage(sort, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -225,33 +200,6 @@ public class MainPresenter implements MainContract.Calls {
                     Log.d("THIS YEAR OBSERVER", "DISPOSED");
                 }
 
-            }
-        };
-    }
-
-
-    public DisposableObserver<ResObj> getNextPageObserver() {
-        return new DisposableObserver<ResObj>() {
-
-            @Override
-            public void onNext(@NonNull ResObj resObj) {
-                view.showNextPage(resObj);
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.d(TAG, "Error" + e);
-                e.printStackTrace();
-                view.showError("Error Fetching Data");
-                dispose();
-                getNextPageObserver().dispose();
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(TAG, "Completed");
-                dispose();
-                getNextPageObserver().dispose();
             }
         };
     }

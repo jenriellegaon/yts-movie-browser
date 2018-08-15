@@ -21,19 +21,19 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.contract.MainContract;
+import com.jproject.ytsmoviebrowser.contract.DetailsContract;
 import com.jproject.ytsmoviebrowser.model.data.list.Movie;
 
 import java.util.List;
 
 import io.reactivex.annotations.Nullable;
 
-public class PopularDownloadsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_TYPE_ITEM = 1;
     private final int VIEW_TYPE_PROGRESSBAR = 0;
 
-    MainContract.OnBottomReachedListener onBottomReachedListener;
+    DetailsContract.OnBottomReachedListener onBottomReachedListener;
 
     private Context context;
     private boolean isFooterEnabled = true;
@@ -43,7 +43,7 @@ public class PopularDownloadsAdapter extends RecyclerView.Adapter<RecyclerView.V
     private List<Movie> movieList;
     String imageUrl;
 
-    public PopularDownloadsAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
+    public MovieDetailsAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
 
         this.movieList = movieList;
         this.gridLayoutManager = (GridLayoutManager) rView.getLayoutManager();
@@ -139,7 +139,7 @@ public class PopularDownloadsAdapter extends RecyclerView.Adapter<RecyclerView.V
         return (isFooterEnabled) ? movieList.size() + 1 : movieList.size();
     }
 
-    public void setOnBottomReachedListener(MainContract.OnBottomReachedListener onBottomReachedListener) {
+    public void setOnBottomReachedListener(DetailsContract.OnBottomReachedListener onBottomReachedListener) {
         this.onBottomReachedListener = onBottomReachedListener;
     }
 

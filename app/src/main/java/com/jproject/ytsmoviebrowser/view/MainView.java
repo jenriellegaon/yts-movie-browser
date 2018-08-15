@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MainContract;
@@ -108,11 +107,6 @@ public class MainView extends AppCompatActivity
     }
 
     @Override
-    public void showToast(String message) {
-        Toast.makeText(MainView.this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void showError(String error) {
 
         state.setViewState(MultiStateView.VIEW_STATE_ERROR);
@@ -186,13 +180,10 @@ public class MainView extends AppCompatActivity
             pddm.setMovieList(movieData);
             movieDataModel.add(pddm);
 
-
             Log.d("TOP RATED", "READY");
 
             mainPresenter = new MainPresenter(this);
             mainPresenter.getTopDownloads("download_count");
-
-//            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
 
         }
 
@@ -227,8 +218,6 @@ public class MainView extends AppCompatActivity
             mainPresenter = new MainPresenter(this);
             mainPresenter.getTopRated("rating");
 
-//            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-
         }
     }
 
@@ -262,38 +251,6 @@ public class MainView extends AppCompatActivity
 
         }
 
-    }
-
-    @Override
-    public void showNextPage(ResObj resObj) {
-
-//        int limit = resObj.getData().getLimit();
-//        int movie_count = resObj.getData().getMovieCount();
-//        int page_number = resObj.getData().getPageNumber();
-//        int last_page = movie_count / limit;
-//
-//        Log.d("RESULT", resObj.getStatus());
-//        Log.d("LIMIT", String.valueOf(limit));
-//        Log.d("MOVIE COUNT", String.valueOf(movie_count));
-//        Log.d("PAGE NUMBER", String.valueOf(page_number));
-//        Log.d("LAST PAGE", String.valueOf(last_page));
-//
-//        if (resObj.getStatus().equals("ok")) {
-//
-//            //Check if page number is equal to last page
-//            if (page_number == last_page) {
-//
-//                Log.d("Last page reached", String.valueOf(last_page));
-//                popularDownloadsAdapter.enableFooter(false);
-//            } else {
-//
-//                movieList.addAll(resObj.getData().getMovies());
-//                popularDownloadsAdapter.notifyDataSetChanged();
-//                swipy.setRefreshing(false);
-//                state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-//                popularDownloadsAdapter.enableFooter(true);
-//            }
-//        }
     }
 
     @Override
