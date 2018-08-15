@@ -107,17 +107,11 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                disposable.clear();
-                if (isDisposed()) {
-                    Log.d("POPULAR OBSERVER", "DISPOSED");
-                }
-
             }
         };
     }
@@ -135,16 +129,11 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                disposable.clear();
-                if (isDisposed()) {
-                    Log.d("TOP RATED OBSERVER", "DISPOSED");
-                }
             }
         };
     }
@@ -162,16 +151,11 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                disposable.clear();
-                if (isDisposed()) {
-                    Log.d("LATEST UPLOADS OBSERVER", "DISPOSED");
-                }
             }
         };
     }
@@ -189,17 +173,11 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                disposable.clear();
             }
 
             @Override
             public void onComplete() {
                 Log.d(TAG, "Completed");
-                disposable.clear();
-                if (isDisposed()) {
-                    Log.d("THIS YEAR OBSERVER", "DISPOSED");
-                }
-
             }
         };
     }

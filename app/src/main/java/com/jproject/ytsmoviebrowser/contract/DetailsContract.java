@@ -2,13 +2,25 @@ package com.jproject.ytsmoviebrowser.contract;
 
 import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
 
+
 public interface DetailsContract {
 
     interface View {
         void initViews();
+
         void showToast(String message);
+
         void showError(String error);
+
         void showMovieDetails(ResObj resObj);
+
+        void showNextPage(ResObj resObj);
+    }
+
+    interface Calls {
+        void showMoviesByGenre(String genre);
+
+        void showNextPage(String sort, String genre);
     }
 
     interface CardClickListener {
