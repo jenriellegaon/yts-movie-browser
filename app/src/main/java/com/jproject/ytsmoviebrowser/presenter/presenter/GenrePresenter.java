@@ -26,25 +26,41 @@ public class GenrePresenter implements GenreContract.Calls {
     }
 
     //CALLS
-
     /**********************************************************************************************/
     @Override
-    public void showMoviesByGenre(String genre) {
-
+    public void getMoviesBySection(String section) {
+        disposable.add(getMoviesBySectionObservable(section).subscribeWith(getMoviesBySectionObserver()));
     }
 
     @Override
-    public void showNextPage(String sort, String genre) {
-        ++page;
+    public void getMoviesByGenre(String section, String genre) {
+        disposable.add(getMoviesByGenreObservable(section, genre).subscribeWith(getMoviesByGenreObserver()));
+    }
 
+    @Override
+    public void getNextPageBySection(String sort) {
+        ++page;
+        disposable.add(getNextPageBySectionObservable(sort).subscribeWith(getNextPageBySectionObserver()));
+    }
+
+    @Override
+    public void getNextPageByGenre(String sort, String genre) {
+        ++page;
+        disposable.add(getNextPageByGenreObservable(sort, genre).subscribeWith(getNextPageByGenreObserver()));
     }
     /**********************************************************************************************/
     //CALLS
 
 
     //OBSERVABLES
-
     /**********************************************************************************************/
+    public Observable<ResObj> getMoviesBySectionObservable(String sort) {
+        return Client.getRetrofit().create(APIService.class)
+                .getBySection(sort)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
     public Observable<ResObj> getMoviesByGenreObservable(String sort, String genre) {
         return Client.getRetrofit().create(APIService.class)
                 .getByGenre(sort, genre)
@@ -52,9 +68,16 @@ public class GenrePresenter implements GenreContract.Calls {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResObj> getNextPageObservable(String sort, String genre) {
+    public Observable<ResObj> getNextPageBySectionObservable(String sort) {
         return Client.getRetrofit().create(APIService.class)
-                .getNextPage(sort, genre, page)
+                .getNextPageBySection(sort, page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<ResObj> getNextPageByGenreObservable(String sort, String genre) {
+        return Client.getRetrofit().create(APIService.class)
+                .getNextPageByGenre(sort, genre, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -63,8 +86,29 @@ public class GenrePresenter implements GenreContract.Calls {
 
 
     //OBSERVERS
-
     /**********************************************************************************************/
+    public DisposableObserver<ResObj> getMoviesBySectionObserver() {
+        return new DisposableObserver<ResObj>() {
+
+            @Override
+            public void onNext(@NonNull ResObj resObj) {
+                view.showMoviesBySection(resObj);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d(TAG, "Error" + e);
+                e.printStackTrace();
+                view.showError("Error Fetching Data");
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "Completed");
+            }
+        };
+    }
+
     public DisposableObserver<ResObj> getMoviesByGenreObserver() {
         return new DisposableObserver<ResObj>() {
 
@@ -87,12 +131,34 @@ public class GenrePresenter implements GenreContract.Calls {
         };
     }
 
-    public DisposableObserver<ResObj> getNextPageObserver() {
+    public DisposableObserver<ResObj> getNextPageBySectionObserver() {
         return new DisposableObserver<ResObj>() {
 
             @Override
             public void onNext(@NonNull ResObj resObj) {
-                view.showNextPage(resObj);
+                view.showNextPageBySection(resObj);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.d(TAG, "Error" + e);
+                e.printStackTrace();
+                view.showError("Error Fetching Data");
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d(TAG, "Completed");
+            }
+        };
+    }
+
+    public DisposableObserver<ResObj> getNextPageByGenreObserver() {
+        return new DisposableObserver<ResObj>() {
+
+            @Override
+            public void onNext(@NonNull ResObj resObj) {
+                view.showNextPageByGenre(resObj);
             }
 
             @Override

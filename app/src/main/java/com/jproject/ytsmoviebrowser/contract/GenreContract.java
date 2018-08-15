@@ -12,15 +12,23 @@ public interface GenreContract {
 
         void showError(String error);
 
+        void showMoviesBySection(ResObj resObj);
+
         void showMoviesByGenre(ResObj resObj);
 
-        void showNextPage(ResObj resObj);
+        void showNextPageBySection(ResObj resObj);
+
+        void showNextPageByGenre(ResObj resObj);
     }
 
     interface Calls {
-        void showMoviesByGenre(String genre);
+        void getMoviesBySection(String section);
 
-        void showNextPage(String sort, String genre);
+        void getMoviesByGenre(String section, String genre);
+
+        void getNextPageBySection(String sort);
+
+        void getNextPageByGenre(String sort, String genre);
     }
 
     interface CardClickListener {

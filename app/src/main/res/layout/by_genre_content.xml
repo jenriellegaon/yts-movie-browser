@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/primaryDarkTextColor"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".view.HomeView"
-    tools:showIn="@layout/home_app_bar">
+    tools:context=".view.ByGenreView"
+    tools:showIn="@layout/by_genre_view">
 
     <com.kennyc.view.MultiStateView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -20,9 +20,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:msv_emptyView="@layout/home_empty_view"
-        app:msv_errorView="@layout/home_error_view"
-        app:msv_loadingView="@layout/home_loading_view"
+        app:msv_emptyView="@layout/empty_view"
+        app:msv_errorView="@layout/error_view"
+        app:msv_loadingView="@layout/loading_view"
         app:msv_viewState="loading">
 
         <com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout

@@ -1,6 +1,8 @@
 package com.jproject.ytsmoviebrowser.presenter.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
@@ -10,11 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.model.data.home.MovieDataModel;
+import com.jproject.ytsmoviebrowser.presenter.util.SlideAnimationUtil;
+import com.jproject.ytsmoviebrowser.view.ByGenreView;
 
 import java.util.List;
 
@@ -24,6 +27,7 @@ public class MovieDataAdapter extends RecyclerView.Adapter<MovieDataAdapter.Item
     private Context context;
     private RecyclerView.RecycledViewPool recycledViewPool;
     private SnapHelper snapHelper;
+    String section;
 
     public MovieDataAdapter(List<MovieDataModel> popularDownloadsDataList, Context context) {
         this.popularDownloadsDataList = popularDownloadsDataList;
@@ -58,7 +62,35 @@ public class MovieDataAdapter extends RecyclerView.Adapter<MovieDataAdapter.Item
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), "Button More Clicked! " + sectionName, Toast.LENGTH_SHORT).show();
+
+                switch (sectionName) {
+
+                    case "Latest Uploads":
+                        section = "date_added";
+                        break;
+
+                    case "Top Downloads":
+                        section = "download_count";
+                        break;
+
+                    case "Top Rated":
+                        section = "rating";
+                        break;
+
+                    case "This Year":
+                        section = "year";
+                        break;
+                }
+
+                Intent intent = new Intent(context, ByGenreView.class);
+                intent.putExtra("section", section);
+
+                Activity activity = (Activity) context;
+                activity.startActivity(intent);
+
+                SlideAnimationUtil.slideInFromLeft(context, view);
+                activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+
             }
         });
     }

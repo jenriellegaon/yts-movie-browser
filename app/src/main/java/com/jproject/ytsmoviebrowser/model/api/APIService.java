@@ -30,6 +30,14 @@ public interface APIService {
 
     @GET(Client.DEFAULT)
     Observable<ResObj>
-    getNextPage(@Query(value = "sort_by") String sort, @Query(value = "genre") String genre, @Query(value = "page") int page);
+    getBySection(@Query(value = "sort_by") String sort);
+
+    @GET(Client.DEFAULT)
+    Observable<ResObj>
+    getNextPageByGenre(@Query(value = "sort_by") String sort, @Query(value = "genre") String genre, @Query(value = "page") int page);
+
+    @GET(Client.DEFAULT)
+    Observable<ResObj>
+    getNextPageBySection(@Query(value = "sort_by") String sort, @Query(value = "page") int page);
 
 }

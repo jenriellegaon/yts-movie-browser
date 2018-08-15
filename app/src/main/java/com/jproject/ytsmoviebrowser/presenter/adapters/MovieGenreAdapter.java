@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -42,6 +43,7 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private List<Movie> movieList;
     String imageUrl;
+    String movie_id;
 
     public MovieGenreAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
 
@@ -76,10 +78,10 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if (viewType == VIEW_TYPE_ITEM) {
 
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.details_card_item, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.by_genre_card_item, parent, false);
             vh = new ImageViewHolder(itemView);
         } else {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.details_footer, null, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.by_genre_footer, null, false);
             vh = new ProgressViewHolder(itemView);
         }
 
@@ -102,6 +104,7 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             Movie movie = movieList.get(position);
             imageUrl = movie.getLargeCoverImage();
+            movie_id = String.valueOf(movie.getId());
             RequestOptions requestOptions = new RequestOptions();
 
             Glide.with(context)
@@ -125,6 +128,8 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         }
                     })
                     .into(((ImageViewHolder) holder).imageView);
+
+            ((ImageViewHolder) holder).imageView.setTransitionName(movie_id);
         }
 
     }
@@ -164,6 +169,16 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             super(v);
             imageView = v.findViewById(R.id.movieImage);
+
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(v.getContext(), imageView.getTransitionName(), Toast.LENGTH_SHORT).show();
+
+                    //Go to movie details view
+                }
+            });
         }
     }
 }

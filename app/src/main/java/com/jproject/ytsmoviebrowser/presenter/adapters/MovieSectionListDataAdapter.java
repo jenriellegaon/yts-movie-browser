@@ -78,6 +78,7 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
 
     }
 
+
     @Override
     public int getItemCount() {
         return (null != movieList ? movieList.size() : 0);
