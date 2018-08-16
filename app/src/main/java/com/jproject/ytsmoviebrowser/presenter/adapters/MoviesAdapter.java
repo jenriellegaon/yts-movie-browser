@@ -1,6 +1,8 @@
 package com.jproject.ytsmoviebrowser.presenter.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,19 +24,20 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.contract.GenreContract;
+import com.jproject.ytsmoviebrowser.contract.MoviesContract;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
+import com.jproject.ytsmoviebrowser.view.DetailsView;
 
 import java.util.List;
 
 import io.reactivex.annotations.Nullable;
 
-public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_TYPE_ITEM = 1;
     private final int VIEW_TYPE_PROGRESSBAR = 0;
 
-    GenreContract.OnBottomReachedListener onBottomReachedListener;
+    MoviesContract.OnBottomReachedListener onBottomReachedListener;
 
     private Context context;
     private boolean isFooterEnabled = true;
@@ -45,7 +48,7 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     String imageUrl;
     String movie_id;
 
-    public MovieGenreAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
+    public MoviesAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
 
         this.movieList = movieList;
         this.gridLayoutManager = (GridLayoutManager) rView.getLayoutManager();
@@ -78,10 +81,10 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         if (viewType == VIEW_TYPE_ITEM) {
 
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.by_genre_card_item, parent, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_card_item, parent, false);
             vh = new ImageViewHolder(itemView);
         } else {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.by_genre_footer, null, false);
+            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_footer, null, false);
             vh = new ProgressViewHolder(itemView);
         }
 
@@ -144,7 +147,7 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return (isFooterEnabled) ? movieList.size() + 1 : movieList.size();
     }
 
-    public void setOnBottomReachedListener(GenreContract.OnBottomReachedListener onBottomReachedListener) {
+    public void setOnBottomReachedListener(MoviesContract.OnBottomReachedListener onBottomReachedListener) {
         this.onBottomReachedListener = onBottomReachedListener;
     }
 
@@ -156,7 +159,7 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public static class ProgressViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
 
-        public ProgressViewHolder(View v) {
+        ProgressViewHolder(View v) {
             super(v);
             progressBar = v.findViewById(R.id.progressBar);
         }
@@ -165,7 +168,7 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
 
-        public ImageViewHolder(View v) {
+        ImageViewHolder(View v) {
 
             super(v);
             imageView = v.findViewById(R.id.movieImage);
@@ -177,6 +180,10 @@ public class MovieGenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     Toast.makeText(v.getContext(), imageView.getTransitionName(), Toast.LENGTH_SHORT).show();
 
                     //Go to movie details view
+                    Activity activity = (Activity) v.getContext();
+                    Intent intent = new Intent(activity, DetailsView.class);
+                    intent.putExtra("movie_id", imageView.getTransitionName());
+                    activity.startActivity(intent);
                 }
             });
         }

@@ -20,20 +20,4 @@ public interface HomeAPIService {
     Observable<ResObj>
     getLatestUploads(@Query(value = "sort_by") String latestUploads);
 
-    @GET(Client.DEFAULT_HOME)
-    Observable<ResObj>
-    getByGenre(@Query(value = "sort_by") String sort, @Query(value = "genre") String genre);
-
-    @GET(Client.DEFAULT_HOME)
-    Observable<ResObj>
-    getBySection(@Query(value = "sort_by") String sort);
-
-    @GET(Client.DEFAULT_HOME)
-    Observable<ResObj>
-    getNextPageByGenre(@Query(value = "sort_by") String sort, @Query(value = "genre") String genre, @Query(value = "page") int page);
-
-    @GET(Client.DEFAULT_HOME)
-    Observable<ResObj>
-    getNextPageBySection(@Query(value = "sort_by") String sort, @Query(value = "page") int page);
-
 }

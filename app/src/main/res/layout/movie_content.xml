@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/primaryDarkTextColor"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".view.ByGenreView"
-    tools:showIn="@layout/by_genre_view">
+    tools:context=".view.MovieGridView"
+    tools:showIn="@layout/movie_view">
 
     <com.kennyc.view.MultiStateView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"

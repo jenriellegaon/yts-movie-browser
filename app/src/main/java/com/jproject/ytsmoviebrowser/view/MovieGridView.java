@@ -14,11 +14,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.contract.GenreContract;
+import com.jproject.ytsmoviebrowser.contract.MoviesContract;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
-import com.jproject.ytsmoviebrowser.presenter.adapters.MovieGenreAdapter;
-import com.jproject.ytsmoviebrowser.presenter.presenter.GenrePresenter;
+import com.jproject.ytsmoviebrowser.presenter.adapters.MoviesAdapter;
+import com.jproject.ytsmoviebrowser.presenter.presenter.MoviesPresenter;
 import com.kennyc.view.MultiStateView;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
@@ -29,7 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ByGenreView extends AppCompatActivity implements GenreContract.View, MultiStateView.StateListener {
+public class MovieGridView extends AppCompatActivity implements MoviesContract.View, MultiStateView.StateListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -43,9 +43,9 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
     @BindView(R.id.swipy)
     SwipyRefreshLayout swipy;
 
-    MovieGenreAdapter adapter;
+    MoviesAdapter adapter;
     List<Movie> movieList = new ArrayList<>();
-    GenrePresenter presenter;
+    MoviesPresenter presenter;
 
     Bundle extras;
     String section;
@@ -54,7 +54,7 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.by_genre_view);
+        setContentView(R.layout.movie_view);
 
         //Bind views
         ButterKnife.bind(this);
@@ -62,7 +62,7 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
         //Initialize views
         initViews();
 
-        presenter = new GenrePresenter(this);
+        presenter = new MoviesPresenter(this);
         presenter.getMoviesBySection(section);
 
     }
@@ -90,11 +90,11 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
             }
         });
 
-        rv.setLayoutManager(new GridLayoutManager(ByGenreView.this, 2));
+        rv.setLayoutManager(new GridLayoutManager(MovieGridView.this, 2));
         rv.setItemAnimator(new DefaultItemAnimator());
         rv.setHasFixedSize(true);
 
-        adapter = new MovieGenreAdapter(movieList, rv, ByGenreView.this);
+        adapter = new MoviesAdapter(movieList, rv, MovieGridView.this);
         adapter.enableFooter(false);
         rv.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -106,13 +106,13 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
                 //On pull down
                 adapter.enableFooter(false);
                 movieList.clear();
-                presenter = new GenrePresenter(ByGenreView.this);
+                presenter = new MoviesPresenter(MovieGridView.this);
                 presenter.getMoviesBySection(section);
 
             }
         });
 
-        adapter.setOnBottomReachedListener(new GenreContract.OnBottomReachedListener() {
+        adapter.setOnBottomReachedListener(new MoviesContract.OnBottomReachedListener() {
             @Override
             public void onBottomReached(int position) {
                 presenter.getNextPageBySection(section);
@@ -128,7 +128,7 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
                         state.setViewState(MultiStateView.VIEW_STATE_LOADING);
 
                         movieList.clear();
-                        presenter = new GenrePresenter(ByGenreView.this);
+                        presenter = new MoviesPresenter(MovieGridView.this);
                         presenter.getNextPageBySection(section);
                     }
                 });
@@ -177,11 +177,6 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
     }
 
     @Override
-    public void showMoviesByGenre(ResObj resObj) {
-
-    }
-
-    @Override
     public void showNextPageBySection(ResObj resObj) {
 
         int limit = resObj.getData().getLimit();
@@ -215,41 +210,8 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
     }
 
     @Override
-    public void showNextPageByGenre(ResObj resObj) {
-
-        int limit = resObj.getData().getLimit();
-        int movie_count = resObj.getData().getMovieCount();
-        int page_number = resObj.getData().getPageNumber();
-        int last_page = movie_count / limit;
-
-        Log.d("RESULT", resObj.getStatus());
-        Log.d("LIMIT", String.valueOf(limit));
-        Log.d("MOVIE COUNT", String.valueOf(movie_count));
-        Log.d("PAGE NUMBER", String.valueOf(page_number));
-        Log.d("LAST PAGE", String.valueOf(last_page));
-
-        if (resObj.getStatus().equals("ok")) {
-
-            //Check if page number is equal to last page
-            if (page_number == last_page - 1) {
-
-                Log.d("Last page reached", String.valueOf(last_page));
-                adapter.enableFooter(false);
-            } else {
-
-                movieList.addAll(resObj.getData().getMovies());
-                adapter.notifyDataSetChanged();
-                swipy.setRefreshing(false);
-                state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-                adapter.enableFooter(true);
-            }
-        }
-
-    }
-
-    @Override
     public void onStateChanged(@MultiStateView.ViewState int viewState) {
-        Log.v("ByGenreView", " View State: " + viewState);
+        Log.v("MovieGridView", " View State: " + viewState);
     }
 
     @Override

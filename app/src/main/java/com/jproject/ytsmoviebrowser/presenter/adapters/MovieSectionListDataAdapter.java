@@ -1,6 +1,8 @@
 package com.jproject.ytsmoviebrowser.presenter.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
+import com.jproject.ytsmoviebrowser.view.DetailsView;
 
 import java.util.List;
 
@@ -85,19 +88,24 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
     }
 
     public class SingleItemRowHolder extends RecyclerView.ViewHolder {
+        public ImageView itemImage;
 
-        protected ImageView itemImage;
+        SingleItemRowHolder(View v) {
+            super(v);
 
-        public SingleItemRowHolder(View itemView) {
-            super(itemView);
+            this.itemImage = v.findViewById(R.id.itemImage);
 
-            this.itemImage = itemView.findViewById(R.id.itemImage);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
+            v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     Toast.makeText(view.getContext(), itemImage.getTransitionName(), Toast.LENGTH_SHORT).show();
+
+                    //Go to movie details view
+                    Activity activity = (Activity) view.getContext();
+                    Intent intent = new Intent(activity, DetailsView.class);
+                    intent.putExtra("movie_id", itemImage.getTransitionName());
+                    activity.startActivity(intent);
                 }
             });
         }

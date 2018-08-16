@@ -145,7 +145,6 @@ public class HomeView extends AppCompatActivity
 
             homePresenter = new HomePresenter(this);
             homePresenter.getTopDownloads("download_count");
-
         }
     }
 
@@ -180,7 +179,6 @@ public class HomeView extends AppCompatActivity
             homePresenter = new HomePresenter(this);
             homePresenter.getTopRated("rating");
         }
-
     }
 
     @Override
@@ -212,9 +210,7 @@ public class HomeView extends AppCompatActivity
             Log.d("TOP RATED", "READY");
 
             state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-
         }
-
     }
 
 

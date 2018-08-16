@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.model.data.home.MovieDataModel;
-import com.jproject.ytsmoviebrowser.view.ByGenreView;
+import com.jproject.ytsmoviebrowser.view.MovieGridView;
 
 import java.util.List;
 
@@ -77,7 +77,7 @@ public class MovieDataAdapter extends RecyclerView.Adapter<MovieDataAdapter.Item
                         break;
                 }
 
-                Intent intent = new Intent(context, ByGenreView.class);
+                Intent intent = new Intent(context, MovieGridView.class);
                 intent.putExtra("section", section);
                 intent.putExtra("title" , sectionName);
 
