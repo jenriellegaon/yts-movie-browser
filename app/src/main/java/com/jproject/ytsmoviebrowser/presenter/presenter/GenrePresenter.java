@@ -3,7 +3,7 @@ package com.jproject.ytsmoviebrowser.presenter.presenter;
 import android.util.Log;
 
 import com.jproject.ytsmoviebrowser.contract.GenreContract;
-import com.jproject.ytsmoviebrowser.model.api.APIService;
+import com.jproject.ytsmoviebrowser.model.api.HomeAPIService;
 import com.jproject.ytsmoviebrowser.model.api.Client;
 import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 
@@ -55,28 +55,28 @@ public class GenrePresenter implements GenreContract.Calls {
     //OBSERVABLES
     /**********************************************************************************************/
     public Observable<ResObj> getMoviesBySectionObservable(String sort) {
-        return Client.getRetrofit().create(APIService.class)
+        return Client.getRetrofit().create(HomeAPIService.class)
                 .getBySection(sort)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResObj> getMoviesByGenreObservable(String sort, String genre) {
-        return Client.getRetrofit().create(APIService.class)
+        return Client.getRetrofit().create(HomeAPIService.class)
                 .getByGenre(sort, genre)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResObj> getNextPageBySectionObservable(String sort) {
-        return Client.getRetrofit().create(APIService.class)
+        return Client.getRetrofit().create(HomeAPIService.class)
                 .getNextPageBySection(sort, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResObj> getNextPageByGenreObservable(String sort, String genre) {
-        return Client.getRetrofit().create(APIService.class)
+        return Client.getRetrofit().create(HomeAPIService.class)
                 .getNextPageByGenre(sort, genre, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());

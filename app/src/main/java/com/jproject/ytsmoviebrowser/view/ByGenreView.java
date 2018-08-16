@@ -19,7 +19,6 @@ import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.MovieGenreAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.GenrePresenter;
-import com.jproject.ytsmoviebrowser.presenter.util.RecyclerTouchListener;
 import com.kennyc.view.MultiStateView;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
@@ -50,6 +49,7 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
 
     Bundle extras;
     String section;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +70,12 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
     @Override
     public void initViews() {
 
+        extras = getIntent().getExtras();
+        section = extras.getString("section");
+        title = extras.getString("title");
+
+        setTitle(title);
+
         Log.d("BY GENRE VIEW ", "INITIALIZED");
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -83,9 +89,6 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
                 overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
             }
         });
-
-        extras = getIntent().getExtras();
-        section = extras.getString("section");
 
         rv.setLayoutManager(new GridLayoutManager(ByGenreView.this, 2));
         rv.setItemAnimator(new DefaultItemAnimator());
@@ -129,20 +132,6 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
                         presenter.getNextPageBySection(section);
                     }
                 });
-
-
-        rv.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), rv, new GenreContract.CardClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
-
     }
 
     @Override
@@ -283,6 +272,11 @@ public class ByGenreView extends AppCompatActivity implements GenreContract.View
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
+
+
+
+
+
             return true;
         }
 

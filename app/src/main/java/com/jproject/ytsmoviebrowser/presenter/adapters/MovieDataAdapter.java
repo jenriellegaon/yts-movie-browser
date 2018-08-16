@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.model.data.home.MovieDataModel;
-import com.jproject.ytsmoviebrowser.presenter.util.SlideAnimationUtil;
 import com.jproject.ytsmoviebrowser.view.ByGenreView;
 
 import java.util.List;
@@ -76,19 +75,15 @@ public class MovieDataAdapter extends RecyclerView.Adapter<MovieDataAdapter.Item
                     case "Top Rated":
                         section = "rating";
                         break;
-
-                    case "This Year":
-                        section = "year";
-                        break;
                 }
 
                 Intent intent = new Intent(context, ByGenreView.class);
                 intent.putExtra("section", section);
+                intent.putExtra("title" , sectionName);
 
                 Activity activity = (Activity) context;
                 activity.startActivity(intent);
 
-                SlideAnimationUtil.slideInFromLeft(context, view);
                 activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
             }

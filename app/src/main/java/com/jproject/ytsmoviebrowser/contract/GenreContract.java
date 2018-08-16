@@ -31,10 +31,6 @@ public interface GenreContract {
         void getNextPageByGenre(String sort, String genre);
     }
 
-    interface CardClickListener {
-        void onClick(android.view.View view, int position);
-        void onLongClick(android.view.View view, int position);
-    }
 
     interface OnBottomReachedListener {
         void onBottomReached(int position);

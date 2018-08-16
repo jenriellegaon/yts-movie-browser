@@ -75,7 +75,6 @@ public class HomeView extends AppCompatActivity
         toggle.syncState();
 
         movieDataModel = new ArrayList<>();
-//        topRatedDataModel = new ArrayList<>();
 
         navigationView.setNavigationItemSelectedListener(this);
         onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_home));
@@ -117,6 +116,40 @@ public class HomeView extends AppCompatActivity
     }
 
     @Override
+    public void showLatestUploads(ResObj resObj) {
+
+        int limit = resObj.getData().getLimit();
+        int movie_count = resObj.getData().getMovieCount();
+        int page_number = resObj.getData().getPageNumber();
+        int last_page = movie_count / limit;
+
+        Log.d("RESULT", resObj.getStatus());
+        Log.d("LIMIT", String.valueOf(limit));
+        Log.d("MOVIE COUNT", String.valueOf(movie_count));
+        Log.d("PAGE NUMBER", String.valueOf(page_number));
+        Log.d("LAST PAGE", String.valueOf(last_page));
+
+        if (resObj.getStatus().equals("ok")) {
+
+            pddm = new MovieDataModel();
+            pddm.setHeaderTitle("Latest Uploads");
+
+            movieData = new ArrayList<>();
+            movieData.addAll(resObj.getData().getMovies());
+            adapter.notifyDataSetChanged();
+
+            pddm.setMovieList(movieData);
+            movieDataModel.add(pddm);
+
+            Log.d("LATEST UPLOADS", "READY");
+
+            homePresenter = new HomePresenter(this);
+            homePresenter.getTopDownloads("download_count");
+
+        }
+    }
+
+    @Override
     public void showTopDownloads(ResObj resObj) {
 
         int limit = resObj.getData().getLimit();
@@ -142,13 +175,10 @@ public class HomeView extends AppCompatActivity
             pddm.setMovieList(movieData);
             movieDataModel.add(pddm);
 
-            homePresenter = new HomePresenter(this);
-            homePresenter.getThisYear("year");
-
             Log.d("TOP DOWNLOADS", "READY");
 
-//            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
-
+            homePresenter = new HomePresenter(this);
+            homePresenter.getTopRated("rating");
         }
 
     }
@@ -181,76 +211,13 @@ public class HomeView extends AppCompatActivity
 
             Log.d("TOP RATED", "READY");
 
-            homePresenter = new HomePresenter(this);
-            homePresenter.getTopDownloads("download_count");
-
-        }
-
-    }
-
-    @Override
-    public void showLatestUploads(ResObj resObj) {
-
-        int limit = resObj.getData().getLimit();
-        int movie_count = resObj.getData().getMovieCount();
-        int page_number = resObj.getData().getPageNumber();
-        int last_page = movie_count / limit;
-
-        Log.d("RESULT", resObj.getStatus());
-        Log.d("LIMIT", String.valueOf(limit));
-        Log.d("MOVIE COUNT", String.valueOf(movie_count));
-        Log.d("PAGE NUMBER", String.valueOf(page_number));
-        Log.d("LAST PAGE", String.valueOf(last_page));
-
-        if (resObj.getStatus().equals("ok")) {
-
-            pddm = new MovieDataModel();
-            pddm.setHeaderTitle("Latest Uploads");
-
-            movieData = new ArrayList<>();
-            movieData.addAll(resObj.getData().getMovies());
-            adapter.notifyDataSetChanged();
-
-            pddm.setMovieList(movieData);
-            movieDataModel.add(pddm);
-
-            homePresenter = new HomePresenter(this);
-            homePresenter.getTopRated("rating");
-
-        }
-    }
-
-    @Override
-    public void showThisYear(ResObj resObj) {
-
-        int limit = resObj.getData().getLimit();
-        int movie_count = resObj.getData().getMovieCount();
-        int page_number = resObj.getData().getPageNumber();
-        int last_page = movie_count / limit;
-
-        Log.d("RESULT", resObj.getStatus());
-        Log.d("LIMIT", String.valueOf(limit));
-        Log.d("MOVIE COUNT", String.valueOf(movie_count));
-        Log.d("PAGE NUMBER", String.valueOf(page_number));
-        Log.d("LAST PAGE", String.valueOf(last_page));
-
-        if (resObj.getStatus().equals("ok")) {
-
-            pddm = new MovieDataModel();
-            pddm.setHeaderTitle("This Year");
-
-            movieData = new ArrayList<>();
-            movieData.addAll(resObj.getData().getMovies());
-            adapter.notifyDataSetChanged();
-
-            pddm.setMovieList(movieData);
-            movieDataModel.add(pddm);
-
             state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
 
         }
 
     }
+
+
 
     @Override
     public void onStateChanged(@MultiStateView.ViewState int viewState) {

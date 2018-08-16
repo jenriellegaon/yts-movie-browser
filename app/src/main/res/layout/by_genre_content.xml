@@ -20,9 +20,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:msv_emptyView="@layout/empty_view"
-        app:msv_errorView="@layout/error_view"
-        app:msv_loadingView="@layout/loading_view"
+        app:msv_emptyView="@layout/state_empty_view"
+        app:msv_errorView="@layout/state_error_view"
+        app:msv_loadingView="@layout/state_loading_view"
         app:msv_viewState="loading">
 
         <com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout

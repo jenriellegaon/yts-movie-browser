@@ -27,7 +27,7 @@ import io.reactivex.annotations.Nullable;
 
 public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSectionListDataAdapter.SingleItemRowHolder> {
 
-    String movieTitle;
+    String movie_id;
     private List<Movie> movieList;
     private Context context;
 
@@ -48,7 +48,7 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
 
         Movie movie = movieList.get(position);
         String imageUrl = movie.getLargeCoverImage();
-        movieTitle = movie.getTitleEnglish();
+        movie_id = String.valueOf(movie.getId());
 
         RequestOptions requestOptions = new RequestOptions();
 
@@ -74,7 +74,7 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
                 })
                 .into(holder.itemImage);
 
-        holder.itemImage.setTransitionName(movieTitle);
+        holder.itemImage.setTransitionName(movie_id);
 
     }
 

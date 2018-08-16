@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.jproject.ytsmoviebrowser.contract.HomeContract;
-import com.jproject.ytsmoviebrowser.model.api.APIService;
+import com.jproject.ytsmoviebrowser.model.api.HomeAPIService;
 import com.jproject.ytsmoviebrowser.model.api.Client;
 import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 
@@ -45,12 +45,6 @@ public class HomePresenter implements HomeContract.Calls {
         disposable.add(getLatestUploadsObservable(latestUploads).subscribeWith(getLatestUploadsObserver()));
     }
 
-    @SuppressLint("CheckResult")
-    @Override
-    public void getThisYear(String thisYear) {
-        disposable.add(getThisYearObservable(thisYear).subscribeWith(getThisYearObserver()));
-    }
-
     @Override
     public void detachAll() {
         disposable.clear();
@@ -62,29 +56,22 @@ public class HomePresenter implements HomeContract.Calls {
     //OBSERVABLES
     /**********************************************************************************************/
     public Observable<ResObj> getTopDownloadsObservable(String topDownloads) {
-        return Client.getRetrofit().create(APIService.class)
+        return Client.getRetrofit().create(HomeAPIService.class)
                 .getTopDownloads(topDownloads)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResObj> getTopRatedObservable(String topRated) {
-        return Client.getRetrofit().create(APIService.class)
+        return Client.getRetrofit().create(HomeAPIService.class)
                 .getTopRated(topRated)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<ResObj> getLatestUploadsObservable(String latestUploads) {
-        return Client.getRetrofit().create(APIService.class)
+        return Client.getRetrofit().create(HomeAPIService.class)
                 .getLatestUploads(latestUploads)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    public Observable<ResObj> getThisYearObservable(String thisYear) {
-        return Client.getRetrofit().create(APIService.class)
-                .getThisYear(thisYear)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -144,28 +131,6 @@ public class HomePresenter implements HomeContract.Calls {
             @Override
             public void onNext(@NonNull ResObj resObj) {
                 view.showLatestUploads(resObj);
-            }
-
-            @Override
-            public void onError(@NonNull Throwable e) {
-                Log.d(TAG, "Error" + e);
-                e.printStackTrace();
-                view.showError("Error Fetching Data");
-            }
-
-            @Override
-            public void onComplete() {
-                Log.d(TAG, "Completed");
-            }
-        };
-    }
-
-    public DisposableObserver<ResObj> getThisYearObserver() {
-        return new DisposableObserver<ResObj>() {
-
-            @Override
-            public void onNext(@NonNull ResObj resObj) {
-                view.showThisYear(resObj);
             }
 
             @Override

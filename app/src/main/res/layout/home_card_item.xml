@@ -19,7 +19,7 @@
             android:layout_gravity="center_horizontal"
             android:adjustViewBounds="true"
             android:background="@color/dark"
-            android:scaleType="fitCenter"
+            android:contentDescription="Movie Image"
             android:src="@drawable/placeholder" />
 
     </LinearLayout>

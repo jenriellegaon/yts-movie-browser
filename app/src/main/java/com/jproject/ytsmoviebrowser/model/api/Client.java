@@ -8,8 +8,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Client {
 
     public static final String BASE_URL = "https://yts.am";
-    public static final String DEFAULT = "/api/v2/list_movies.json?";
-    public static final String DEFAULT_LIMITED = "/api/v2/list_movies.json?&limit=5";
+    public static final String DEFAULT_DETAILS = "/api/v2/movie_details.json?&with_cast=true&with_images=true";
+    public static final String DEFAULT_HOME = "/api/v2/list_movies.json?";
+    public static final String DEFAULT_HOME_LIMITED = "/api/v2/list_movies.json?&limit=5";
+
 
     public static Retrofit retrofit;
 

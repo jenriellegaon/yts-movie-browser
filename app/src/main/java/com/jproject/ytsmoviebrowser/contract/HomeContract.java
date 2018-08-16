@@ -9,7 +9,6 @@ public interface HomeContract {
         void showTopDownloads(ResObj resObj);
         void showTopRated(ResObj resObj);
         void showLatestUploads(ResObj resObj);
-        void showThisYear(ResObj resObj);
         void initViews();
     }
 
@@ -17,7 +16,6 @@ public interface HomeContract {
         void getTopDownloads(String topDownloads);
         void getTopRated(String topRated);
         void getLatestUploads(String latestUploads);
-        void getThisYear(String thisYear);
         void detachAll();
     }
 }
