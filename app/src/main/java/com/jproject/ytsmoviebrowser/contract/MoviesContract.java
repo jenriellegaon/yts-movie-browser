@@ -24,7 +24,6 @@ public interface MoviesContract {
         void getNextPageBySection(String sort);
     }
 
-
     interface OnBottomReachedListener {
         void onBottomReached(int position);
     }

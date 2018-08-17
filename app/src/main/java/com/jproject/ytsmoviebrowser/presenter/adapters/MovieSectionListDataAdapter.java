@@ -10,18 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
+import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
 import com.jproject.ytsmoviebrowser.view.DetailsView;
 
 import java.util.List;
@@ -31,6 +29,8 @@ import io.reactivex.annotations.Nullable;
 public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSectionListDataAdapter.SingleItemRowHolder> {
 
     String movie_id;
+    String movie_title;
+
     private List<Movie> movieList;
     private Context context;
 
@@ -52,16 +52,15 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
         Movie movie = movieList.get(position);
         String imageUrl = movie.getLargeCoverImage();
         movie_id = String.valueOf(movie.getId());
+        movie_title = movie.getTitleEnglish();
 
-        RequestOptions requestOptions = new RequestOptions();
-
-        Glide.with(context)
+        GlideApp.with(context)
                 .asDrawable()
                 .load(imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .apply(requestOptions.placeholder(R.drawable.placeholder))
-                .apply(requestOptions.error(R.drawable.placeholder_unavailable))
-                .apply(requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL))
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder_unavailable)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -78,9 +77,9 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
                 .into(holder.itemImage);
 
         holder.itemImage.setTransitionName(movie_id);
+        holder.itemImage.setContentDescription(movie_title);
 
     }
-
 
     @Override
     public int getItemCount() {
@@ -99,13 +98,14 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
                 @Override
                 public void onClick(View view) {
 
-                    Toast.makeText(view.getContext(), itemImage.getTransitionName(), Toast.LENGTH_SHORT).show();
-
                     //Go to movie details view
                     Activity activity = (Activity) view.getContext();
                     Intent intent = new Intent(activity, DetailsView.class);
                     intent.putExtra("movie_id", itemImage.getTransitionName());
+                    intent.putExtra("movie_title", String.valueOf(itemImage.getContentDescription()));
                     activity.startActivity(intent);
+
+                    Log.d("TITLE", String.valueOf(itemImage.getContentDescription()));
                 }
             });
         }

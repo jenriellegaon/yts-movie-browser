@@ -1,5 +1,7 @@
 package com.jproject.ytsmoviebrowser.model.api;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -20,6 +22,9 @@ public class Client {
         if (retrofit == null) {
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.connectTimeout(5, TimeUnit.MINUTES)
+                    .writeTimeout(5, TimeUnit.MINUTES)
+                    .readTimeout(5, TimeUnit.MINUTES);
             OkHttpClient okHttpClient = builder.build();
 
             retrofit = new Retrofit.Builder()

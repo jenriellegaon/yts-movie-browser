@@ -10,7 +10,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="260dp"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -19,7 +19,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
+            app:collapsedTitleTextAppearance="@android:style/TextAppearance.DeviceDefault.Large"
             app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleTextAppearance="@android:style/TextAppearance.DeviceDefault.Large"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="@color/primaryDarkColor">
 
@@ -44,6 +46,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/details_nested" />
+    <include
+        android:id="@+id/inc"
+        layout="@layout/details_nested" />
 
 </android.support.design.widget.CoordinatorLayout>

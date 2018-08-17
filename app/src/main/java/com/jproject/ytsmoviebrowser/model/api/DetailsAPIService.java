@@ -1,6 +1,6 @@
 package com.jproject.ytsmoviebrowser.model.api;
 
-import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;

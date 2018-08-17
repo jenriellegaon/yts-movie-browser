@@ -235,10 +235,6 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
 
-
-
-
-
             return true;
         }
 

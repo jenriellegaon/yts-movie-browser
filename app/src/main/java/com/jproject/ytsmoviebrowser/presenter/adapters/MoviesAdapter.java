@@ -1,5 +1,6 @@
 package com.jproject.ytsmoviebrowser.presenter.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,19 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MoviesContract;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
+import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
 import com.jproject.ytsmoviebrowser.view.DetailsView;
 
 import java.util.List;
@@ -45,8 +44,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private GridLayoutManager gridLayoutManager;
 
     private List<Movie> movieList;
+
     String imageUrl;
     String movie_id;
+    String movie_title;
 
     public MoviesAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
 
@@ -91,6 +92,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return vh;
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
@@ -108,15 +110,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             Movie movie = movieList.get(position);
             imageUrl = movie.getLargeCoverImage();
             movie_id = String.valueOf(movie.getId());
-            RequestOptions requestOptions = new RequestOptions();
+            movie_title = movie.getTitleEnglish();
 
-            Glide.with(context)
+            GlideApp.with(context)
                     .asDrawable()
                     .load(imageUrl)
                     .transition(DrawableTransitionOptions.withCrossFade())
-                    .apply(requestOptions.placeholder(R.drawable.placeholder))
-                    .apply(requestOptions.error(R.drawable.placeholder_unavailable))
-                    .apply(requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL))
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder_unavailable)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -133,6 +135,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .into(((ImageViewHolder) holder).imageView);
 
             ((ImageViewHolder) holder).imageView.setTransitionName(movie_id);
+            ((ImageViewHolder) holder).imageView.setContentDescription(movie_title);
         }
 
     }
@@ -165,7 +168,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public static class ImageViewHolder extends RecyclerView.ViewHolder {
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
 
         ImageViewHolder(View v) {
@@ -174,16 +177,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             imageView = v.findViewById(R.id.movieImage);
 
             imageView.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("NewApi")
                 @Override
                 public void onClick(View v) {
-
-                    Toast.makeText(v.getContext(), imageView.getTransitionName(), Toast.LENGTH_SHORT).show();
 
                     //Go to movie details view
                     Activity activity = (Activity) v.getContext();
                     Intent intent = new Intent(activity, DetailsView.class);
                     intent.putExtra("movie_id", imageView.getTransitionName());
+                    intent.putExtra("movie_title", String.valueOf(imageView.getContentDescription()));
                     activity.startActivity(intent);
+
+                    Log.d("TITLE", String.valueOf(imageView.getContentDescription()));
                 }
             });
         }
