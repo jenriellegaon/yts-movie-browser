@@ -25,7 +25,7 @@ public class Torrent {
     private String size;
     @SerializedName("size_bytes")
     @Expose
-    private Integer sizeBytes;
+    private Long sizeBytes;
     @SerializedName("date_uploaded")
     @Expose
     private String dateUploaded;
@@ -81,11 +81,11 @@ public class Torrent {
         this.size = size;
     }
 
-    public Integer getSizeBytes() {
+    public Long getSizeBytes() {
         return sizeBytes;
     }
 
-    public void setSizeBytes(Integer sizeBytes) {
+    public void setSizeBytes(Long sizeBytes) {
         this.sizeBytes = sizeBytes;
     }
 

@@ -51,7 +51,6 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     Bundle extras;
     String movie_id;
     String movie_title;
-
     String bg_image;
 
     @Override
@@ -116,7 +115,7 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     @Override
     public void showMovieDetails(ResObj resObj) {
 
-        bg_image = resObj.getData().getMovie().getBackgroundImageOriginal();
+        bg_image = resObj.getData().getMovie().getMediumScreenshotImage1();
 
         Log.d("RESULT", resObj.getStatus());
 
@@ -124,7 +123,7 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
             setBgImage(getApplicationContext(), bg_image);
 
-            Log.d("DETAILS VIEW", "READY");
+            Log.d(movie_title, "READY");
         }
 
     }
