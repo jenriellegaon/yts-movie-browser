@@ -1,5 +1,6 @@
 package com.jproject.ytsmoviebrowser.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
@@ -27,6 +29,9 @@ import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.PagerAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.DetailsPresenter;
 import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +57,9 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     String movie_id;
     String movie_title;
     String bg_image;
+
+    List<String> torrentQuality = new ArrayList<>();
+    List<String> torrentUrl = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +120,7 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public void showMovieDetails(ResObj resObj) {
 
@@ -122,6 +131,20 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         if (resObj.getStatus().equals("ok")) {
 
             setBgImage(getApplicationContext(), bg_image);
+
+            for (int i = 0; i <= 1; i++) {
+
+                try {
+                    Log.d("Torrent" + i, String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality()));
+                    torrentQuality.add(String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality()));
+                    torrentUrl.add(String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getUrl()));
+
+                } catch (IndexOutOfBoundsException error) {
+                    // Output expected IndexOutOfBoundsExceptions.
+                    Log.e("IndexOutOfBoundsException", String.valueOf(error));
+                }
+
+            }
 
             Log.d(movie_title, "READY");
         }
@@ -145,7 +168,7 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
                 .asDrawable()
                 .load(imageurl)
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .placeholder(R.drawable.placeholder_landscape)
+//                .placeholder(R.drawable.placeholder_landscape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(new RequestListener<Drawable>() {
                     @Override
@@ -171,13 +194,37 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         return true;
     }
 
+    @SuppressLint("NewApi")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_download) {
-            showToast("Download Torrent");
+//            showToast("Download Torrent");
+
+            new MaterialDialog.Builder(this)
+                    .title("Download Torrent")
+                    .items(torrentQuality)
+                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+
+                            showToast(torrentUrl.get(which));
+
+                            return true;
+                        }
+                    })
+                    .positiveText("Download")
+                    .widgetColor(getResources().getColor(android.R.color.white))
+                    .backgroundColor(getResources().getColor(R.color.primaryDarkTextColor))
+                    .choiceWidgetColor(getColorStateList(R.color.primaryLightColor))
+                    .titleColor(getResources().getColor(android.R.color.white))
+                    .positiveColor(getResources().getColor(R.color.primaryLightColor))
+                    .contentColor(getResources().getColor(android.R.color.white))
+                    .show();
+
+
             return true;
         }
 

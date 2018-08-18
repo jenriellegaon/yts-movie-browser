@@ -104,6 +104,7 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
                     intent.putExtra("movie_id", itemImage.getTransitionName());
                     intent.putExtra("movie_title", String.valueOf(itemImage.getContentDescription()));
                     activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
                     Log.d("TITLE", String.valueOf(itemImage.getContentDescription()));
                 }

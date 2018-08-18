@@ -187,6 +187,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     intent.putExtra("movie_id", imageView.getTransitionName());
                     intent.putExtra("movie_title", String.valueOf(imageView.getContentDescription()));
                     activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
                     Log.d("TITLE", String.valueOf(imageView.getContentDescription()));
                 }

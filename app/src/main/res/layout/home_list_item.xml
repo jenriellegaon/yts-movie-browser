@@ -30,6 +30,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/btnMore"
                 android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:text="Section Title"
                 android:textColor="@color/primaryTextColor"
                 android:textSize="18sp"
@@ -43,6 +44,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
                 android:text="Browse All"
                 android:textAllCaps="false" />
 

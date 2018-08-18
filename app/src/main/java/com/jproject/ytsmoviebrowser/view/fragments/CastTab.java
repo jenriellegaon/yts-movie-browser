@@ -11,10 +11,12 @@ import com.jproject.ytsmoviebrowser.R;
 
 public class CastTab extends Fragment {
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.details_tab_cast, container, false);
+
 
         return rootView;
     }

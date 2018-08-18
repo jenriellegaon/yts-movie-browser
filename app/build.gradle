@@ -61,4 +61,7 @@ dependencies {
 
     //YOUTUBE PLAYER VIEW
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:8.0.1'
+
+    //CIRCULAR IMAGE VIEW
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
