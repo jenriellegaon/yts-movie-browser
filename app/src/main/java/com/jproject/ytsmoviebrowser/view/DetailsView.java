@@ -24,10 +24,10 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.contract.DetailsContract;
+import com.jproject.ytsmoviebrowser.contract.TorrentContract;
 import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.PagerAdapter;
-import com.jproject.ytsmoviebrowser.presenter.presenter.DetailsPresenter;
+import com.jproject.ytsmoviebrowser.presenter.presenter.TorrentPresenter;
 import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.annotations.Nullable;
 
-public class DetailsView extends AppCompatActivity implements DetailsContract.View {
+public class DetailsView extends AppCompatActivity implements TorrentContract.View {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -51,12 +51,16 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     PagerAdapter pagerAdapter;
     ViewPager viewPager;
 
-    DetailsPresenter presenter;
+    TorrentPresenter presenter;
 
     Bundle extras;
     String movie_id;
     String movie_title;
     String bg_image;
+
+    String quality;
+    String size;
+    String url;
 
     List<String> torrentQuality = new ArrayList<>();
     List<String> torrentUrl = new ArrayList<>();
@@ -91,7 +95,6 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
             movie_id = extras.getString("movie_id");
             movie_title = extras.getString("movie_title");
-
         }
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -109,39 +112,52 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         });
 
         pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+        pagerAdapter.setId(movie_id);
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(pagerAdapter);
 
         tabLayout.setupWithViewPager(viewPager);
 
-        presenter = new DetailsPresenter(this);
-        presenter.getMovieDetails(movie_id);
+        presenter = new TorrentPresenter(this);
+        presenter.getTorrentDetails(movie_id);
 
 
     }
 
     @SuppressLint("LongLogTag")
     @Override
-    public void showMovieDetails(ResObj resObj) {
-
-        bg_image = resObj.getData().getMovie().getMediumScreenshotImage1();
+    public void showTorrentDetails(ResObj resObj) {
 
         Log.d("RESULT", resObj.getStatus());
 
         if (resObj.getStatus().equals("ok")) {
 
-            setBgImage(getApplicationContext(), bg_image);
+            bg_image = resObj.getData().getMovie().getBackgroundImageOriginal();
+            setImage(getApplicationContext(), bg_image);
 
-            for (int i = 0; i <= 1; i++) {
+            for (int i = 0; i <= 5; i++) {
 
                 try {
-                    Log.d("Torrent" + i, String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality()));
-                    torrentQuality.add(String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality()));
-                    torrentUrl.add(String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getUrl()));
 
-                } catch (IndexOutOfBoundsException error) {
+                    //TORRENT
+                    quality = String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality());
+                    size = String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getSize());
+                    url = String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getUrl());
+
+                    Log.d("Torrent " + i, String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality()));
+
+                    torrentQuality.add(quality + " (" + size + ")");
+                    torrentUrl.add(url);
+                    //TORRENT
+
+
+                } catch (NullPointerException npe) {
+                    //Output expected NullPointer Exceptions.
+                    Log.e("NullPointerException", String.valueOf(npe));
+
+                } catch (IndexOutOfBoundsException ioobe) {
                     // Output expected IndexOutOfBoundsExceptions.
-                    Log.e("IndexOutOfBoundsException", String.valueOf(error));
+                    Log.e("IndexOutOfBoundsException", String.valueOf(ioobe));
                 }
 
             }
@@ -162,13 +178,12 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     }
 
     @Override
-    public void setBgImage(Context context, String imageurl) {
+    public void setImage(Context context, String imageUrl) {
 
         GlideApp.with(context)
                 .asDrawable()
-                .load(imageurl)
+                .load(imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
-//                .placeholder(R.drawable.placeholder_landscape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(new RequestListener<Drawable>() {
                     @Override
@@ -201,8 +216,6 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_download) {
-//            showToast("Download Torrent");
-
             new MaterialDialog.Builder(this)
                     .title("Download Torrent")
                     .items(torrentQuality)
@@ -210,7 +223,12 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 
-                            showToast(torrentUrl.get(which));
+                            if (torrentUrl.isEmpty()) {
+                                showToast("No torrent file to download");
+                            } else {
+                                showToast(torrentUrl.get(which));
+                            }
+
 
                             return true;
                         }
@@ -223,7 +241,6 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
                     .positiveColor(getResources().getColor(R.color.primaryLightColor))
                     .contentColor(getResources().getColor(android.R.color.white))
                     .show();
-
 
             return true;
         }

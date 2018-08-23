@@ -4,8 +4,8 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.jproject.ytsmoviebrowser.contract.HomeContract;
-import com.jproject.ytsmoviebrowser.model.api.HomeAPIService;
 import com.jproject.ytsmoviebrowser.model.api.Client;
+import com.jproject.ytsmoviebrowser.model.api.HomeAPIService;
 import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 
 import io.reactivex.Observable;
@@ -20,6 +20,7 @@ public class HomePresenter implements HomeContract.Calls {
     private String TAG = "Main Presenter";
     private HomeContract.View view;
     private CompositeDisposable disposable = new CompositeDisposable();
+
 
     public HomePresenter(HomeContract.View view) {
         this.view = view;
@@ -48,7 +49,9 @@ public class HomePresenter implements HomeContract.Calls {
     @Override
     public void detachAll() {
         disposable.clear();
+        view = null;
     }
+
     /**********************************************************************************************/
     //CALLS
 
@@ -94,6 +97,8 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
+                view = null;
+                detachAll();
             }
 
             @Override
@@ -116,6 +121,8 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
+                view = null;
+                detachAll();
             }
 
             @Override
@@ -138,6 +145,8 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
+                view = null;
+                detachAll();
             }
 
             @Override
