@@ -1,5 +1,9 @@
 package com.jproject.ytsmoviebrowser.model.api;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -12,30 +16,28 @@ public class Client {
     public static final String DEFAULT_HOME = "/api/v2/list_movies.json?";
     public static final String DEFAULT_HOME_LIMITED = "/api/v2/list_movies.json?&limit=5";
 
-
     public static Retrofit retrofit;
 
     public static Retrofit getRetrofit() {
 
         if (retrofit == null) {
 
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-//            builder.connectTimeout(15, TimeUnit.SECONDS)
-//                    .writeTimeout(15, TimeUnit.SECONDS)
-//                    .readTimeout(15, TimeUnit.SECONDS);
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .readTimeout(10, TimeUnit.SECONDS).connectionPool(new ConnectionPool(0, 1, TimeUnit.NANOSECONDS));
+
             OkHttpClient okHttpClient = builder.build();
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                     .client(okHttpClient)
                     .build();
         }
         return retrofit;
-    }
 
-    public void Client() {
 
     }
 }

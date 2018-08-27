@@ -22,8 +22,8 @@
             app:collapsedTitleTextAppearance="@android:style/TextAppearance.DeviceDefault.Large"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-            app:layout_scrollFlags="enterAlwaysCollapsed"
-            app:statusBarScrim="@color/primaryDarkColor">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:statusBarScrim="@color/colorPrimaryDark">
 
             <ImageView
                 android:id="@+id/iv"
@@ -32,7 +32,7 @@
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"
-                app:statusBarScrim="@color/primaryDarkColor" />
+                app:statusBarScrim="@color/colorPrimaryDark" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -51,12 +51,10 @@
         layout="@layout/details_nested" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabPlayTrailer"
-        android:layout_width="match_parent"
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:clickable="true"
-        android:focusable="true"
+        android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_play" />

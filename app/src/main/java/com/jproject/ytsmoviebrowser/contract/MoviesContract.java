@@ -27,4 +27,10 @@ public interface MoviesContract {
     interface OnBottomReachedListener {
         void onBottomReached(int position);
     }
+
+    interface MoviesCardClickListener {
+        void onClick(android.view.View view, int pos);
+
+        void onLongClick(android.view.View view, int pos);
+    }
 }

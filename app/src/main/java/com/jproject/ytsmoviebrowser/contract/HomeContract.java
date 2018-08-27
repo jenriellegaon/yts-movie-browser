@@ -18,4 +18,10 @@ public interface HomeContract {
         void getLatestUploads(String latestUploads);
         void detachAll();
     }
+
+    interface HomeCardClickListener {
+        void onClick(android.view.View view, int position);
+
+        void onLongClick(android.view.View view, int position);
+    }
 }

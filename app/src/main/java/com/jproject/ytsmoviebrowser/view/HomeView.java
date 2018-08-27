@@ -1,9 +1,6 @@
 package com.jproject.ytsmoviebrowser.view;
 
-import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -41,8 +38,6 @@ public class HomeView extends AppCompatActivity
     NavigationView navigationView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    //    @BindView(R.id.swipy)
-//    SwipyRefreshLayout swipy;
     @BindView(R.id.recycler)
     RecyclerView rView;
     @BindView(R.id.multiStateView)
@@ -94,17 +89,38 @@ public class HomeView extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
 
-                        isNetworkAvailable(HomeView.this);
-
                         state.setViewState(MultiStateView.VIEW_STATE_LOADING);
                         movieDataModel.clear();
                         homePresenter = new HomePresenter(HomeView.this);
                         homePresenter.getLatestUploads("date_added");
 
-
-
                     }
                 });
+
+
+//        rView.addOnItemTouchListener(new HomeRecyclerTouchListener(getApplicationContext(), rView, new HomeContract.HomeCardClickListener() {
+//            @Override
+//            public void onClick(View view, int pos) {
+//
+//                String genres = String.valueOf(movieData.get(pos).getGenres());
+//                String movie_id = String.valueOf(movieData.get(pos).getId());
+//                String movie_title = String.valueOf(movieData.get(pos).getTitleEnglish());
+//                Log.d("Genres" , genres);
+//
+//                Intent intent = new Intent(HomeView.this , DetailsView.class);
+//                intent.putExtra("movie_id" , movie_id);
+//                intent.putExtra("movie_title" , movie_title);
+//                intent.putExtra("genres" , genres);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+//
+//            }
+//
+//            @Override
+//            public void onLongClick(View view, int pos) {
+//
+//            }
+//        }));
 
         if (state.getViewState() == 1) {
 
@@ -139,8 +155,6 @@ public class HomeView extends AppCompatActivity
         Log.d("LAST PAGE", String.valueOf(last_page));
 
         if (resObj.getStatus().equals("ok")) {
-
-            isNetworkAvailable(HomeView.this);
 
             pddm = new MovieDataModel();
             pddm.setHeaderTitle("Latest Uploads");
@@ -240,21 +254,9 @@ public class HomeView extends AppCompatActivity
         }
     }
 
-    private boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivity != null) {
-            NetworkInfo[] info = connectivity.getAllNetworkInfo();
-            if (info != null) {
-                for (int i = 0; i < info.length; i++) {
-                    Log.w("INTERNET:", String.valueOf(i));
-                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-                        Log.w("INTERNET:", "connected!");
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -267,9 +269,6 @@ public class HomeView extends AppCompatActivity
 
             if (!navigationView.getMenu().findItem(R.id.nav_home).isChecked()) {
                 //Loads Sectioned Movies
-
-                isNetworkAvailable(HomeView.this);
-
                 movieDataModel.clear();
                 homePresenter = new HomePresenter(this);
                 homePresenter.getLatestUploads("date_added");
@@ -282,4 +281,5 @@ public class HomeView extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

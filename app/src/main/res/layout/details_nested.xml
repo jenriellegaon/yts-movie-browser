@@ -8,10 +8,11 @@
     android:background="@color/primaryDarkTextColor"
     android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".view.DetailsView">
+    tools:context=".view.DetailsView"
+    tools:showIn="@layout/details_view">
 
     <include
-        layout="@layout/details_tabs"
+        layout="@layout/details_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

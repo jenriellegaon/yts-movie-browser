@@ -3,7 +3,7 @@ package com.jproject.ytsmoviebrowser.presenter.presenter;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.jproject.ytsmoviebrowser.contract.InfoContract;
+import com.jproject.ytsmoviebrowser.contract.DetailsContract;
 import com.jproject.ytsmoviebrowser.model.api.Client;
 import com.jproject.ytsmoviebrowser.model.api.DetailsAPIService;
 import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
@@ -15,26 +15,26 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
-public class InfoPresenter implements InfoContract.Calls {
+public class DetailsPresenter implements DetailsContract.Calls {
 
-    private String TAG = "Info Presenter";
-    private InfoContract.View view;
+    private String TAG = "Details Presenter";
+    private DetailsContract.View view;
     private CompositeDisposable disposable = new CompositeDisposable();
 
-    public InfoPresenter(InfoContract.View view) {
+    public DetailsPresenter(DetailsContract.View view) {
         this.view = view;
     }
 
+
     @SuppressLint("CheckResult")
     @Override
-    public void getInfo(String movie_id) {
-        disposable.add(getInfoObservable(movie_id).subscribeWith(getInfoObserver()));
+    public void getMovieDetails(String movie_id) {
+        disposable.add(getMovieDetailsObservable(movie_id).subscribeWith(getMovieDetailsObserver()));
     }
 
     //OBSERVABLES
-
     /**********************************************************************************************/
-    public Observable<ResObj> getInfoObservable(String movie_id) {
+    public Observable<ResObj> getMovieDetailsObservable(String movie_id) {
         return Client.getRetrofit().create(DetailsAPIService.class)
                 .getMovieDetails(movie_id)
                 .subscribeOn(Schedulers.io())
@@ -45,14 +45,13 @@ public class InfoPresenter implements InfoContract.Calls {
 
 
     //OBSERVERS
-
     /**********************************************************************************************/
-    public DisposableObserver<ResObj> getInfoObserver() {
+    public DisposableObserver<ResObj> getMovieDetailsObserver() {
         return new DisposableObserver<ResObj>() {
 
             @Override
             public void onNext(@NonNull ResObj resObj) {
-                view.showInfo(resObj);
+                view.showMovieDetails(resObj);
             }
 
             @Override
@@ -68,7 +67,7 @@ public class InfoPresenter implements InfoContract.Calls {
             }
         };
     }
-    /**********************************************************************************************/
     //OBSERVERS
+    /**********************************************************************************************/
 
 }

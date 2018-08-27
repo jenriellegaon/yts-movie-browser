@@ -4,12 +4,12 @@ import android.content.Context;
 
 import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
 
-public interface TorrentContract {
+public interface DetailsContract {
 
     interface View {
         void initViews();
 
-        void showTorrentDetails(ResObj resObj);
+        void showMovieDetails(ResObj resObj);
 
         void showError(String error);
 
@@ -19,7 +19,7 @@ public interface TorrentContract {
     }
 
     interface Calls {
-        void getTorrentDetails(String movie_id);
+        void getMovieDetails(String movie_id);
     }
 
 }

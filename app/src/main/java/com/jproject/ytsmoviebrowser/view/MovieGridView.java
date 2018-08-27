@@ -1,5 +1,6 @@
 package com.jproject.ytsmoviebrowser.view;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.MoviesAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.MoviesPresenter;
+import com.jproject.ytsmoviebrowser.presenter.util.MoviesRecyclerTouchListener;
 import com.kennyc.view.MultiStateView;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayout;
 import com.omadahealth.github.swipyrefreshlayout.library.SwipyRefreshLayoutDirection;
@@ -129,9 +131,32 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
 
                         movieList.clear();
                         presenter = new MoviesPresenter(MovieGridView.this);
-                        presenter.getNextPageBySection(section);
+                        presenter.getMoviesBySection(section);
                     }
                 });
+
+        rv.addOnItemTouchListener(new MoviesRecyclerTouchListener(getApplicationContext(), rv, new MoviesContract.MoviesCardClickListener() {
+            @Override
+            public void onClick(View view, int pos) {
+
+                String genres = String.valueOf(movieList.get(pos).getGenres());
+                String movie_id = String.valueOf(movieList.get(pos).getId());
+                String movie_title = String.valueOf(movieList.get(pos).getTitleEnglish());
+                Log.d("Genres", genres);
+
+                Intent intent = new Intent(MovieGridView.this, DetailsView.class);
+                intent.putExtra("movie_id", movie_id);
+                intent.putExtra("movie_title", movie_title);
+                intent.putExtra("genres", genres);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+            }
+
+            @Override
+            public void onLongClick(View view, int pos) {
+
+            }
+        }));
     }
 
     @Override
@@ -141,7 +166,7 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
 
     @Override
     public void showError(String error) {
-        showToast(error);
+//        showToast(error);
 
         movieList.clear();
         adapter.enableFooter(false);

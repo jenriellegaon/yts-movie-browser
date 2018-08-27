@@ -5,8 +5,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -24,10 +24,9 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
-import com.jproject.ytsmoviebrowser.contract.TorrentContract;
+import com.jproject.ytsmoviebrowser.contract.DetailsContract;
 import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
-import com.jproject.ytsmoviebrowser.presenter.adapters.PagerAdapter;
-import com.jproject.ytsmoviebrowser.presenter.presenter.TorrentPresenter;
+import com.jproject.ytsmoviebrowser.presenter.presenter.DetailsPresenter;
 import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
 
 import java.util.ArrayList;
@@ -37,30 +36,40 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.annotations.Nullable;
 
-public class DetailsView extends AppCompatActivity implements TorrentContract.View {
+public class DetailsView extends AppCompatActivity implements DetailsContract.View {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.tabLayout)
-    TabLayout tabLayout;
-
     @BindView(R.id.iv)
     ImageView background_image_view;
 
-    PagerAdapter pagerAdapter;
-    ViewPager viewPager;
+    @BindView(R.id.fabPlayTrailer)
+    FloatingActionButton fabPlayTrailer;
 
-    TorrentPresenter presenter;
+    @BindView(R.id.tvSynopsis)
+    TextView tvSynopsis;
 
+    DetailsPresenter presenter;
+
+    //From bundle
     Bundle extras;
     String movie_id;
     String movie_title;
     String bg_image;
+    //From bundle
 
+    String synopsis;
+    String ytcode;
     String quality;
     String size;
-    String url;
+    String torrent_url;
+    String mpaRating;
+    String rating;
+    String year;
+    String movie_genres;
+    int runtime;
+
 
     List<String> torrentQuality = new ArrayList<>();
     List<String> torrentUrl = new ArrayList<>();
@@ -75,7 +84,6 @@ public class DetailsView extends AppCompatActivity implements TorrentContract.Vi
 
         //Initialize views
         initViews();
-
     }
 
 
@@ -95,6 +103,7 @@ public class DetailsView extends AppCompatActivity implements TorrentContract.Vi
 
             movie_id = extras.getString("movie_id");
             movie_title = extras.getString("movie_title");
+            movie_genres = extras.getString("genres");
         }
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
@@ -111,22 +120,27 @@ public class DetailsView extends AppCompatActivity implements TorrentContract.Vi
             }
         });
 
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        pagerAdapter.setId(movie_id);
-        viewPager = findViewById(R.id.viewPager);
-        viewPager.setAdapter(pagerAdapter);
 
-        tabLayout.setupWithViewPager(viewPager);
+        fabPlayTrailer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-        presenter = new TorrentPresenter(this);
-        presenter.getTorrentDetails(movie_id);
+                if (ytcode != null) {
+                    showToast(ytcode);
+                } else {
+                    showToast("Trailer not available");
+                }
+            }
+        });
 
 
+        presenter = new DetailsPresenter(this);
+        presenter.getMovieDetails(movie_id);
     }
 
     @SuppressLint("LongLogTag")
     @Override
-    public void showTorrentDetails(ResObj resObj) {
+    public void showMovieDetails(ResObj resObj) {
 
         Log.d("RESULT", resObj.getStatus());
 
@@ -135,21 +149,43 @@ public class DetailsView extends AppCompatActivity implements TorrentContract.Vi
             bg_image = resObj.getData().getMovie().getBackgroundImageOriginal();
             setImage(getApplicationContext(), bg_image);
 
+            //Details
+            ytcode = String.valueOf(resObj.getData().getMovie().getYtTrailerCode());
+            synopsis = String.valueOf(resObj.getData().getMovie().getDescriptionFull());
+            mpaRating = String.valueOf(resObj.getData().getMovie().getMpaRating());
+            rating = String.valueOf(resObj.getData().getMovie().getRating());
+            runtime = resObj.getData().getMovie().getRuntime();
+            year = String.valueOf(resObj.getData().getMovie().getYear());
+
+            Log.d(movie_title + " Genres", movie_genres);
+            Log.d(movie_title + " MPA Rating", mpaRating);
+            Log.d(movie_title + " Rating", rating);
+            Log.d(movie_title + " Year", year);
+
+            int hour = runtime / 60;
+            int minutes = runtime % 60;
+
+            if (hour <= 1) {
+                Log.d(movie_title + " Run Time", hour + " hour " + minutes + " minutes");
+            } else {
+                Log.d(movie_title + " Run Time", hour + " hours " + minutes + " minutes");
+            }
+
+            tvSynopsis.setText(synopsis);
+
             for (int i = 0; i <= 5; i++) {
 
                 try {
 
-                    //TORRENT
                     quality = String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality());
                     size = String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getSize());
-                    url = String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getUrl());
+                    torrent_url = String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getUrl());
 
-                    Log.d("Torrent " + i, String.valueOf(resObj.getData().getMovie().getTorrents().get(i).getQuality()));
+                    Log.d("Torrent " + quality, " Available");
 
                     torrentQuality.add(quality + " (" + size + ")");
-                    torrentUrl.add(url);
-                    //TORRENT
-
+                    torrentUrl.add(torrent_url);
+                    //Details
 
                 } catch (NullPointerException npe) {
                     //Output expected NullPointer Exceptions.
@@ -183,6 +219,7 @@ public class DetailsView extends AppCompatActivity implements TorrentContract.Vi
         GlideApp.with(context)
                 .asDrawable()
                 .load(imageUrl)
+                .error(R.drawable.placeholder_landscape)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(new RequestListener<Drawable>() {
@@ -228,7 +265,6 @@ public class DetailsView extends AppCompatActivity implements TorrentContract.Vi
                             } else {
                                 showToast(torrentUrl.get(which));
                             }
-
 
                             return true;
                         }
