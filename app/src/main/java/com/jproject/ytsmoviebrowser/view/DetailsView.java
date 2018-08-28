@@ -7,13 +7,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,8 +28,11 @@ import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.DetailsContract;
 import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
+import com.jproject.ytsmoviebrowser.model.data.details.Sections;
+import com.jproject.ytsmoviebrowser.presenter.adapters.DetailsAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.DetailsPresenter;
 import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
+import com.kennyc.view.MultiStateView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +41,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.annotations.Nullable;
 
-public class DetailsView extends AppCompatActivity implements DetailsContract.View {
+public class DetailsView extends AppCompatActivity implements DetailsContract.View, MultiStateView.StateListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -47,8 +52,11 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     @BindView(R.id.fabPlayTrailer)
     FloatingActionButton fabPlayTrailer;
 
-    @BindView(R.id.tvSynopsis)
-    TextView tvSynopsis;
+    @BindView(R.id.rvDetails)
+    RecyclerView rvDetails;
+
+    @BindView(R.id.multiStateViewDetails)
+    MultiStateView msvDetails;
 
     DetailsPresenter presenter;
 
@@ -68,11 +76,14 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     String rating;
     String year;
     String movie_genres;
-    int runtime;
-
+    String runtime;
 
     List<String> torrentQuality = new ArrayList<>();
     List<String> torrentUrl = new ArrayList<>();
+
+    List<Sections> sectionList = new ArrayList<>();
+    DetailsAdapter adapter;
+    Sections sections;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +122,13 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setTitle(movie_title);
 
+        rvDetails.setLayoutManager(new LinearLayoutManager(DetailsView.this));
+        rvDetails.setItemAnimator(new DefaultItemAnimator());
+        rvDetails.setHasFixedSize(true);
+
+        adapter = new DetailsAdapter(sectionList, rvDetails, getApplicationContext());
+        rvDetails.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,8 +151,21 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
             }
         });
 
+        msvDetails.setStateListener(this);
+        msvDetails.getView(MultiStateView.VIEW_STATE_ERROR).findViewById(R.id.retry)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-        presenter = new DetailsPresenter(this);
+                        msvDetails.setViewState(MultiStateView.VIEW_STATE_LOADING);
+
+                        presenter = new DetailsPresenter(DetailsView.this);
+                        presenter.getMovieDetails(movie_id);
+                    }
+                });
+
+
+        presenter = new DetailsPresenter(DetailsView.this);
         presenter.getMovieDetails(movie_id);
     }
 
@@ -151,27 +182,66 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
             //Details
             ytcode = String.valueOf(resObj.getData().getMovie().getYtTrailerCode());
-            synopsis = String.valueOf(resObj.getData().getMovie().getDescriptionFull());
-            mpaRating = String.valueOf(resObj.getData().getMovie().getMpaRating());
-            rating = String.valueOf(resObj.getData().getMovie().getRating());
-            runtime = resObj.getData().getMovie().getRuntime();
-            year = String.valueOf(resObj.getData().getMovie().getYear());
 
+            synopsis = String.valueOf(resObj.getData().getMovie().getDescriptionFull());
+            if (synopsis.isEmpty()) {
+                synopsis = getString(R.string.unavailable);
+            }
+            sections = new Sections();
+            sections.setTitle("Synopsis");
+            sections.setDetails(synopsis);
+            sectionList.add(sections);
+
+            if (movie_genres.isEmpty()) {
+                movie_genres = getString(R.string.unavailable);
+            }
+            sections = new Sections();
+            sections.setTitle("Genre");
+            sections.setDetails(movie_genres.replaceAll("\\[|\\]", ""));
+            sectionList.add(sections);
+
+            year = String.valueOf(resObj.getData().getMovie().getYear());
+            if (year.isEmpty()) {
+                year = getString(R.string.unavailable);
+            }
+            sections = new Sections();
+            sections.setTitle("Year");
+            sections.setDetails(year);
+            sectionList.add(sections);
+
+            mpaRating = String.valueOf(resObj.getData().getMovie().getMpaRating());
+            if (mpaRating.isEmpty()) {
+                mpaRating = getString(R.string.unavailable);
+            }
+            sections = new Sections();
+            sections.setTitle("MPA Rating");
+            sections.setDetails(mpaRating);
+            sectionList.add(sections);
+
+            rating = String.valueOf(resObj.getData().getMovie().getRating());
+            if (rating.isEmpty()) {
+                rating = getString(R.string.unavailable);
+            }
+            sections = new Sections();
+            sections.setTitle("Rating");
+            sections.setDetails(rating);
+            sectionList.add(sections);
+
+            runtime = String.valueOf(resObj.getData().getMovie().getRuntime());
+            if (runtime.isEmpty()) {
+                runtime = getString(R.string.unavailable);
+            }
+            sections = new Sections();
+            sections.setTitle("Run Time");
+            sections.setDetails(runtime + " minutes");
+            sectionList.add(sections);
+
+            Log.d(movie_title + " Synopsis", synopsis);
             Log.d(movie_title + " Genres", movie_genres);
             Log.d(movie_title + " MPA Rating", mpaRating);
             Log.d(movie_title + " Rating", rating);
             Log.d(movie_title + " Year", year);
-
-            int hour = runtime / 60;
-            int minutes = runtime % 60;
-
-            if (hour <= 1) {
-                Log.d(movie_title + " Run Time", hour + " hour " + minutes + " minutes");
-            } else {
-                Log.d(movie_title + " Run Time", hour + " hours " + minutes + " minutes");
-            }
-
-            tvSynopsis.setText(synopsis);
+            Log.d(movie_title + " Runtime", runtime);
 
             for (int i = 0; i <= 5; i++) {
 
@@ -198,6 +268,7 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
             }
 
+            msvDetails.setViewState(MultiStateView.VIEW_STATE_CONTENT);
             Log.d(movie_title, "READY");
         }
 
@@ -282,5 +353,10 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStateChanged(@MultiStateView.ViewState int viewState) {
+        Log.v("Details View", " View State: " + viewState);
     }
 }

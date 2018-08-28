@@ -22,7 +22,7 @@
             app:collapsedTitleTextAppearance="@android:style/TextAppearance.DeviceDefault.Large"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-            app:layout_scrollFlags="enterAlwaysCollapsed"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="@color/primaryDarkColor">
 
             <ImageView

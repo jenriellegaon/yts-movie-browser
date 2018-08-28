@@ -12,7 +12,7 @@
     tools:showIn="@layout/details_view">
 
     <include
-        layout="@layout/details_content"
+        layout="@layout/details_content_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
