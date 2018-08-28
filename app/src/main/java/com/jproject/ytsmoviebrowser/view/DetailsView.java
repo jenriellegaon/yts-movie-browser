@@ -2,6 +2,7 @@ package com.jproject.ytsmoviebrowser.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -144,10 +145,12 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
             public void onClick(View v) {
 
                 if (ytcode != null) {
-                    showToast(ytcode);
+                    showTrailer();
                 } else {
                     showToast("Trailer not available");
                 }
+
+
             }
         });
 
@@ -358,5 +361,12 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     @Override
     public void onStateChanged(@MultiStateView.ViewState int viewState) {
         Log.v("Details View", " View State: " + viewState);
+    }
+
+
+    public void showTrailer() {
+        Intent showTrailer = new Intent(DetailsView.this, TrailerView.class);
+        showTrailer.putExtra("ytcode", ytcode);
+        startActivity(showTrailer);
     }
 }
