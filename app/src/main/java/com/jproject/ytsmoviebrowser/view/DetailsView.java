@@ -98,7 +98,6 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         initViews();
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -231,13 +230,19 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
             sectionList.add(sections);
 
             runtime = String.valueOf(resObj.getData().getMovie().getRuntime());
-            if (runtime.isEmpty()) {
+            if (runtime.isEmpty() || runtime.equals("0")) {
                 runtime = getString(R.string.unavailable);
+                sections = new Sections();
+                sections.setTitle("Run Time");
+                sections.setDetails(runtime);
+                sectionList.add(sections);
+            } else {
+                sections = new Sections();
+                sections.setTitle("Run Time");
+                sections.setDetails(runtime + " minutes");
+                sectionList.add(sections);
             }
-            sections = new Sections();
-            sections.setTitle("Run Time");
-            sections.setDetails(runtime + " minutes");
-            sectionList.add(sections);
+
 
             Log.d(movie_title + " Synopsis", synopsis);
             Log.d(movie_title + " Genres", movie_genres);
@@ -363,10 +368,13 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         Log.v("Details View", " View State: " + viewState);
     }
 
-
     public void showTrailer() {
         Intent showTrailer = new Intent(DetailsView.this, TrailerView.class);
         showTrailer.putExtra("ytcode", ytcode);
+        showTrailer.putExtra("title", movie_title);
+        showTrailer.putExtra("year", year);
         startActivity(showTrailer);
     }
+
+
 }

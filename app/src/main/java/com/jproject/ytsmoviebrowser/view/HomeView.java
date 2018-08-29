@@ -122,22 +122,13 @@ public class HomeView extends AppCompatActivity
 //            }
 //        }));
 
-        if (state.getViewState() == 1) {
-
-            homePresenter = new HomePresenter(this);
-            homePresenter.detachAll();
-        }
     }
 
     @Override
     public void showError(String error) {
 
         state.setViewState(MultiStateView.VIEW_STATE_ERROR);
-        homePresenter = new HomePresenter(this);
-        homePresenter.detachAll();
-
         Log.d("RESPONSE ERROR! ", "Response error");
-
     }
 
     @Override

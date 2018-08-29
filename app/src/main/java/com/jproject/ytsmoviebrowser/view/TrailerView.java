@@ -2,6 +2,7 @@ package com.jproject.ytsmoviebrowser.view;
 
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
@@ -23,12 +24,13 @@ public class TrailerView extends AppCompatActivity implements TrailerContract.Vi
 
     Bundle extras;
     String ytcode;
+    String title;
+    String year;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_movie_trailer);
-
 
         //Bind view
         ButterKnife.bind(this);
@@ -48,15 +50,20 @@ public class TrailerView extends AppCompatActivity implements TrailerContract.Vi
 
         if (extras != null) {
             ytcode = extras.getString("ytcode");
+            title = extras.getString("title");
+            year = extras.getString("year");
 
             PlayerUIController playerUIController = trailer_view.getPlayerUIController();
+
             playerUIController.showFullscreenButton(false);
             playerUIController.showYouTubeButton(true);
+            playerUIController.setVideoTitle(title + " (" + year + ") " + "Movie Trailer");
+            playerUIController.showVideoTitle(true);
 
             trailer_view.enterFullScreen();
             trailer_view.initialize(new YouTubePlayerInitListener() {
                 @Override
-                public void onInitSuccess(final YouTubePlayer initializedYouTubePlayer) {
+                public void onInitSuccess(@NonNull final YouTubePlayer initializedYouTubePlayer) {
                     initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
                         @Override
                         public void onReady() {
@@ -65,13 +72,18 @@ public class TrailerView extends AppCompatActivity implements TrailerContract.Vi
                         }
                     });
                 }
-            }, true);
+            }, false);
+
+
+
+
         }
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        trailer_view.release();
         finish();
         overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
     }

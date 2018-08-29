@@ -10,10 +10,9 @@ public interface MoviesAPIService {
 
     @GET(Client.DEFAULT_HOME)
     Observable<ResObj>
-    getBySection(@Query(value = "sort_by") String sort);
+    getBySection(@Query(value = "sort_by") String sort, @Query(value = "genre") String genre, @Query(value = "page") int page);
 
     @GET(Client.DEFAULT_HOME)
     Observable<ResObj>
-    getNextPageBySection(@Query(value = "sort_by") String sort, @Query(value = "page") int page);
-
+    getNextPageBySection(@Query(value = "sort_by") String sort, @Query(value = "genre") String genre, @Query(value = "page") int page);
 }

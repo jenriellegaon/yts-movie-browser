@@ -1,5 +1,6 @@
 package com.jproject.ytsmoviebrowser.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MoviesContract;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
@@ -52,6 +54,8 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
     Bundle extras;
     String section;
     String title;
+    int selectedGenreIndex = 0;
+    String selectedGenre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +68,9 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
         //Initialize views
         initViews();
 
+        movieList.clear();
         presenter = new MoviesPresenter(this);
-        presenter.getMoviesBySection(section);
-
+        presenter.getMoviesBySection(section, "");
     }
 
     @Override
@@ -109,7 +113,7 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
                 adapter.enableFooter(false);
                 movieList.clear();
                 presenter = new MoviesPresenter(MovieGridView.this);
-                presenter.getMoviesBySection(section);
+                presenter.getMoviesBySection(section, selectedGenre);
 
             }
         });
@@ -117,7 +121,7 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
         adapter.setOnBottomReachedListener(new MoviesContract.OnBottomReachedListener() {
             @Override
             public void onBottomReached(int position) {
-                presenter.getNextPageBySection(section);
+                presenter.getNextPageBySection(section, selectedGenre);
             }
         });
 
@@ -131,7 +135,7 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
 
                         movieList.clear();
                         presenter = new MoviesPresenter(MovieGridView.this);
-                        presenter.getMoviesBySection(section);
+                        presenter.getMoviesBySection(section, selectedGenre);
                     }
                 });
 
@@ -204,34 +208,34 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
     @Override
     public void showNextPageBySection(ResObj resObj) {
 
-        int limit = resObj.getData().getLimit();
-        int movie_count = resObj.getData().getMovieCount();
-        int page_number = resObj.getData().getPageNumber();
-        int last_page = movie_count / limit;
-
-        Log.d("RESULT", resObj.getStatus());
-        Log.d("LIMIT", String.valueOf(limit));
-        Log.d("MOVIE COUNT", String.valueOf(movie_count));
-        Log.d("PAGE NUMBER", String.valueOf(page_number));
-        Log.d("LAST PAGE", String.valueOf(last_page));
-
         if (resObj.getStatus().equals("ok")) {
 
+            int limit = resObj.getData().getLimit();
+            int movie_count = resObj.getData().getMovieCount();
+            int page_number = resObj.getData().getPageNumber();
+            int last_page = movie_count / limit;
+
+            Log.d("RESULT", resObj.getStatus());
+            Log.d("LIMIT", String.valueOf(limit));
+            Log.d("MOVIE COUNT", String.valueOf(movie_count));
+            Log.d("PAGE NUMBER", String.valueOf(page_number));
+            Log.d("LAST PAGE", String.valueOf(last_page));
+
+            movieList.addAll(resObj.getData().getMovies());
+            adapter.notifyDataSetChanged();
+            swipy.setRefreshing(false);
+            state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+
             //Check if page number is equal to last page
-            if (page_number == last_page - 1) {
+            if (page_number == last_page) {
 
-                Log.d("Last page reached", String.valueOf(last_page));
                 adapter.enableFooter(false);
-            } else {
-
-                movieList.addAll(resObj.getData().getMovies());
-                adapter.notifyDataSetChanged();
                 swipy.setRefreshing(false);
-                state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
+                Log.d("Last page reached", String.valueOf(last_page));
+            } else {
                 adapter.enableFooter(true);
             }
         }
-
     }
 
     @Override
@@ -253,12 +257,45 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
         return true;
     }
 
+    @SuppressLint("NewApi")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sort) {
+
+            new MaterialDialog.Builder(this)
+                    .title("Filter by Genre")
+                    .items(R.array.genres)
+                    .itemsCallbackSingleChoice(selectedGenreIndex, new MaterialDialog.ListCallbackSingleChoice() {
+                        @Override
+                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+
+                            state.setViewState(MultiStateView.VIEW_STATE_LOADING);
+
+                            selectedGenreIndex = which;
+                            selectedGenre = String.valueOf(text);
+
+                            if (selectedGenreIndex == 0) {
+                                selectedGenre = "";
+                            }
+
+                            movieList.clear();
+                            presenter = new MoviesPresenter(MovieGridView.this);
+                            presenter.getMoviesBySection(section, selectedGenre);
+
+                            return true;
+                        }
+                    })
+                    .positiveText("Select")
+                    .widgetColor(getResources().getColor(android.R.color.white))
+                    .backgroundColor(getResources().getColor(R.color.primaryDarkTextColor))
+                    .choiceWidgetColor(getColorStateList(R.color.primaryLightColor))
+                    .titleColor(getResources().getColor(android.R.color.white))
+                    .positiveColor(getResources().getColor(R.color.primaryLightColor))
+                    .contentColor(getResources().getColor(android.R.color.white))
+                    .show();
 
             return true;
         }

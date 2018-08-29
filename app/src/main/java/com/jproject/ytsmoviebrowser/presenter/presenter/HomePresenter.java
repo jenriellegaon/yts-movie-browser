@@ -45,13 +45,6 @@ public class HomePresenter implements HomeContract.Calls {
     public void getLatestUploads(String latestUploads) {
         disposable.add(getLatestUploadsObservable(latestUploads).subscribeWith(getLatestUploadsObserver()));
     }
-
-    @Override
-    public void detachAll() {
-        disposable.clear();
-        view = null;
-    }
-
     /**********************************************************************************************/
     //CALLS
 
@@ -97,8 +90,6 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                view = null;
-                detachAll();
             }
 
             @Override
@@ -121,8 +112,6 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                view = null;
-                detachAll();
             }
 
             @Override
@@ -145,8 +134,6 @@ public class HomePresenter implements HomeContract.Calls {
                 Log.d(TAG, "Error" + e);
                 e.printStackTrace();
                 view.showError("Error Fetching Data");
-                view = null;
-                detachAll();
             }
 
             @Override

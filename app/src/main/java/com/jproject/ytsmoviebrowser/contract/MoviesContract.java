@@ -15,13 +15,12 @@ public interface MoviesContract {
         void showMoviesBySection(ResObj resObj);
 
         void showNextPageBySection(ResObj resObj);
-
     }
 
     interface Calls {
-        void getMoviesBySection(String section);
+        void getMoviesBySection(String sort, String genre);
 
-        void getNextPageBySection(String sort);
+        void getNextPageBySection(String sort, String genre);
     }
 
     interface OnBottomReachedListener {
