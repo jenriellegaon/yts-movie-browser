@@ -290,18 +290,25 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
                         @Override
                         public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 
-                            state.setViewState(MultiStateView.VIEW_STATE_LOADING);
+                            if (selectedGenreIndex != which) {
 
-                            selectedGenreIndex = which;
-                            selectedGenre = String.valueOf(text);
+                                state.setViewState(MultiStateView.VIEW_STATE_LOADING);
 
-                            if (selectedGenreIndex == 0) {
-                                selectedGenre = "";
+                                selectedGenreIndex = which;
+                                selectedGenre = String.valueOf(text);
+
+                                if (selectedGenreIndex == 0) {
+                                    selectedGenre = "";
+                                }
+
+                                movieList.clear();
+                                presenter = new MoviesPresenter(MovieGridView.this);
+                                presenter.getMoviesBySection(section, selectedGenre);
+                            } else {
+                                Log.d("Genre Filter", "Same filter selected, please select another filter");
                             }
 
-                            movieList.clear();
-                            presenter = new MoviesPresenter(MovieGridView.this);
-                            presenter.getMoviesBySection(section, selectedGenre);
+
 
                             return true;
                         }

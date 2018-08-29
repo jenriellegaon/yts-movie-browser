@@ -284,7 +284,10 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
     @Override
     public void showError(String error) {
-        showToast(error);
+//        showToast(error);
+        msvDetails.setViewState(MultiStateView.VIEW_STATE_ERROR);
+
+
     }
 
     @Override
