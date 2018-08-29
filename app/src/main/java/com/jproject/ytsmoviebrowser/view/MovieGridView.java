@@ -57,6 +57,11 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
     int selectedGenreIndex = 0;
     String selectedGenre;
 
+    int movie_count;
+    int limit;
+    int page_number;
+    int last_page;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,7 +126,18 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
         adapter.setOnBottomReachedListener(new MoviesContract.OnBottomReachedListener() {
             @Override
             public void onBottomReached(int position) {
-                presenter.getNextPageBySection(section, selectedGenre);
+
+                //Check if current page is equal to last page
+                if (page_number != last_page) {
+
+                    Log.d("Load More", "Enabled");
+                    presenter.getNextPageBySection(section, selectedGenre);
+
+                } else {
+
+                    //Do nothing
+                    Log.d("Load More", "Disabled");
+                }
             }
         });
 
@@ -183,10 +199,10 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
     @Override
     public void showMoviesBySection(ResObj resObj) {
 
-        int limit = resObj.getData().getLimit();
-        int movie_count = resObj.getData().getMovieCount();
-        int page_number = resObj.getData().getPageNumber();
-        int last_page = movie_count / limit;
+        limit = resObj.getData().getLimit();
+        movie_count = resObj.getData().getMovieCount();
+        page_number = resObj.getData().getPageNumber();
+        last_page = movie_count / limit;
 
         Log.d("RESULT", resObj.getStatus());
         Log.d("LIMIT", String.valueOf(limit));
@@ -210,10 +226,10 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
 
         if (resObj.getStatus().equals("ok")) {
 
-            int limit = resObj.getData().getLimit();
-            int movie_count = resObj.getData().getMovieCount();
-            int page_number = resObj.getData().getPageNumber();
-            int last_page = movie_count / limit;
+            limit = resObj.getData().getLimit();
+            movie_count = resObj.getData().getMovieCount();
+            page_number = resObj.getData().getPageNumber();
+            last_page = movie_count / limit;
 
             Log.d("RESULT", resObj.getStatus());
             Log.d("LIMIT", String.valueOf(limit));
@@ -226,14 +242,16 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
             swipy.setRefreshing(false);
             state.setViewState(MultiStateView.VIEW_STATE_CONTENT);
 
-            //Check if page number is equal to last page
-            if (page_number == last_page) {
+            //Check if current page is equal to last page
+            if (page_number != last_page) {
 
-                adapter.enableFooter(false);
-                swipy.setRefreshing(false);
-                Log.d("Last page reached", String.valueOf(last_page));
-            } else {
                 adapter.enableFooter(true);
+                Log.d("Footer Status", "Enabled");
+
+            } else {
+                adapter.enableFooter(false);
+                Log.d("Last page reached", String.valueOf(last_page));
+                Log.d("Footer Status", "Disabled");
             }
         }
     }
