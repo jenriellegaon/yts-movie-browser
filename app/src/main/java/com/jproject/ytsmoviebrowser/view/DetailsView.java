@@ -335,7 +335,7 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_download) {
 
-            if (torrent_url.isEmpty()) {
+            if (torrentUrl.isEmpty()) {
                 showToast("Unavailable");
             } else {
                 new MaterialDialog.Builder(this)
