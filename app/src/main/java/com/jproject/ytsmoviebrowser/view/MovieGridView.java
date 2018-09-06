@@ -281,7 +281,7 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sort) {
+        if (id == R.id.action_filter) {
 
             new MaterialDialog.Builder(this)
                     .title("Filter by Genre")

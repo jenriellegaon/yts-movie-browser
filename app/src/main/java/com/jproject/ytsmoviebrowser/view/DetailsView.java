@@ -146,7 +146,7 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
                 if (ytcode != null) {
                     showTrailer();
                 } else {
-                    showToast("Trailer not available");
+                    showToast("Unavailable");
                 }
 
 
@@ -301,7 +301,6 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
         GlideApp.with(context)
                 .asDrawable()
                 .load(imageUrl)
-                .error(R.drawable.placeholder_landscape)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .listener(new RequestListener<Drawable>() {
@@ -335,32 +334,32 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_download) {
-            new MaterialDialog.Builder(this)
-                    .title("Download Torrent")
-                    .items(torrentQuality)
-                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 
-                            if (torrentUrl.isEmpty()) {
-                                showToast("No torrent file to download");
-                            } else {
+            if (torrent_url.isEmpty()) {
+                showToast("Unavailable");
+            } else {
+                new MaterialDialog.Builder(this)
+                        .title("Download Torrent")
+                        .items(torrentQuality)
+                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
                                 showToast(torrentUrl.get(which));
+
+                                return true;
                             }
+                        })
+                        .positiveText("Download")
+                        .widgetColor(getResources().getColor(android.R.color.white))
+                        .backgroundColor(getResources().getColor(R.color.primaryDarkTextColor))
+                        .choiceWidgetColor(getColorStateList(R.color.primaryLightColor))
+                        .titleColor(getResources().getColor(android.R.color.white))
+                        .positiveColor(getResources().getColor(R.color.primaryLightColor))
+                        .contentColor(getResources().getColor(android.R.color.white))
+                        .show();
 
-                            return true;
-                        }
-                    })
-                    .positiveText("Download")
-                    .widgetColor(getResources().getColor(android.R.color.white))
-                    .backgroundColor(getResources().getColor(R.color.primaryDarkTextColor))
-                    .choiceWidgetColor(getColorStateList(R.color.primaryLightColor))
-                    .titleColor(getResources().getColor(android.R.color.white))
-                    .positiveColor(getResources().getColor(R.color.primaryLightColor))
-                    .contentColor(getResources().getColor(android.R.color.white))
-                    .show();
-
-            return true;
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);

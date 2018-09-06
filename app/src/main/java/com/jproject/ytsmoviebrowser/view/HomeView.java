@@ -122,6 +122,18 @@ public class HomeView extends AppCompatActivity
 //            }
 //        }));
 
+        showTriangle();
+
+
+    }
+
+    public void showTriangle() {
+
+        Log.d("", "Triangle");
+
+        for (int i = 1; i <= 10; i++) {
+            Log.d("", "*");
+        }
     }
 
     @Override

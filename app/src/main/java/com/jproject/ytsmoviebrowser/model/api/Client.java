@@ -25,7 +25,8 @@ public class Client {
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .retryOnConnectionFailure(true)
-                    .readTimeout(10, TimeUnit.SECONDS).connectionPool(new ConnectionPool(0, 1, TimeUnit.NANOSECONDS));
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .connectionPool(new ConnectionPool(0, 1, TimeUnit.NANOSECONDS));
 
             OkHttpClient okHttpClient = builder.build();
 
