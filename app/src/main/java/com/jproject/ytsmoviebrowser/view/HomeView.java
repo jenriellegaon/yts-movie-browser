@@ -96,44 +96,6 @@ public class HomeView extends AppCompatActivity
 
                     }
                 });
-
-
-//        rView.addOnItemTouchListener(new HomeRecyclerTouchListener(getApplicationContext(), rView, new HomeContract.HomeCardClickListener() {
-//            @Override
-//            public void onClick(View view, int pos) {
-//
-//                String genres = String.valueOf(movieData.get(pos).getGenres());
-//                String movie_id = String.valueOf(movieData.get(pos).getId());
-//                String movie_title = String.valueOf(movieData.get(pos).getTitleEnglish());
-//                Log.d("Genres" , genres);
-//
-//                Intent intent = new Intent(HomeView.this , DetailsView.class);
-//                intent.putExtra("movie_id" , movie_id);
-//                intent.putExtra("movie_title" , movie_title);
-//                intent.putExtra("genres" , genres);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-//
-//            }
-//
-//            @Override
-//            public void onLongClick(View view, int pos) {
-//
-//            }
-//        }));
-
-        showTriangle();
-
-
-    }
-
-    public void showTriangle() {
-
-        Log.d("", "Triangle");
-
-        for (int i = 1; i <= 10; i++) {
-            Log.d("", "*");
-        }
     }
 
     @Override
