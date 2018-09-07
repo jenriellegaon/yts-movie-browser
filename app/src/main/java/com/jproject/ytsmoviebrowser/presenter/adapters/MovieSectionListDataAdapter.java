@@ -1,6 +1,8 @@
 package com.jproject.ytsmoviebrowser.presenter.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -19,6 +20,7 @@ import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
+import com.jproject.ytsmoviebrowser.view.DetailsView;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
     private String imageUrl;
     private String title;
     private String genres;
+    private String id;
 
     public MovieSectionListDataAdapter(List<Movie> movieList, Context context) {
         this.movieList = movieList;
@@ -49,9 +52,10 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
 
         Movie movie = movieList.get(position);
         imageUrl = movie.getLargeCoverImage();
-
         title = movie.getTitleEnglish();
         genres = String.valueOf(movie.getGenres());
+        id = String.valueOf(movie.getId());
+
 
         GlideApp.with(context)
                 .asDrawable()
@@ -75,14 +79,9 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
                 })
                 .into(holder.itemImage);
 
-        holder.itemImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Toast.makeText(v.getContext(), title, Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        holder.movieId = id;
+        holder.movieGenres = genres;
+        holder.movieTitle = title;
     }
 
     @Override
@@ -93,11 +92,30 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
 
     public class SingleItemRowHolder extends RecyclerView.ViewHolder {
         public ImageView itemImage;
+        public String movieId;
+        public String movieTitle;
+        public String movieGenres;
 
         SingleItemRowHolder(View v) {
             super(v);
 
             this.itemImage = v.findViewById(R.id.itemImage);
+
+            itemImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(context, DetailsView.class);
+                    intent.putExtra("movie_id", movieId);
+                    intent.putExtra("movie_title", movieTitle);
+                    intent.putExtra("genres", movieGenres);
+
+                    Activity activity = (Activity) context;
+                    activity.startActivity(intent);
+                    activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+
+                }
+            });
         }
     }
 
