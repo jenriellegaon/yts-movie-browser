@@ -17,10 +17,4 @@ public interface HomeContract {
         void getTopRated(String topRated);
         void getLatestUploads(String latestUploads);
     }
-
-    interface HomeCardClickListener {
-        void onClick(android.view.View view, int position);
-
-        void onLongClick(android.view.View view, int position);
-    }
 }

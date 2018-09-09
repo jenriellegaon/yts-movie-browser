@@ -73,10 +73,6 @@ public class TrailerView extends AppCompatActivity implements TrailerContract.Vi
                     });
                 }
             }, false);
-
-
-
-
         }
     }
 

@@ -302,6 +302,7 @@ public class MovieGridView extends AppCompatActivity implements MoviesContract.V
                                 }
 
                                 movieList.clear();
+                                rv.scrollToPosition(0);
                                 presenter = new MoviesPresenter(MovieGridView.this);
                                 presenter.getMoviesBySection(section, selectedGenre);
                             } else {

@@ -1,10 +1,12 @@
 package com.jproject.ytsmoviebrowser.view;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.jproject.ytsmoviebrowser.R;
+import com.jproject.ytsmoviebrowser.YTSMovieBrowser;
 import com.jproject.ytsmoviebrowser.contract.DetailsContract;
 import com.jproject.ytsmoviebrowser.model.data.details.ResObj;
 import com.jproject.ytsmoviebrowser.model.data.details.Sections;
@@ -85,6 +88,9 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     List<Sections> sectionList = new ArrayList<>();
     DetailsAdapter adapter;
     Sections sections;
+
+    DownloadManager torrentDownloadManager;
+    Uri downloadUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,7 +249,6 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
                 sectionList.add(sections);
             }
 
-
             Log.d(movie_title + " Synopsis", synopsis);
             Log.d(movie_title + " Genres", movie_genres);
             Log.d(movie_title + " MPA Rating", mpaRating);
@@ -332,6 +337,8 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        torrentDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_download) {
 
@@ -344,7 +351,19 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
                         .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
                             public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                showToast(torrentUrl.get(which));
+//                                showToast(torrentUrl.get(which));
+
+                                downloadUri = Uri.parse(torrentUrl.get(which));
+
+                                DownloadManager.Request request = new DownloadManager.Request(downloadUri);
+                                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+                                request.setAllowedOverRoaming(false);
+                                request.setTitle(movie_title);
+                                request.setDescription(text + " Torrent");
+                                request.setVisibleInDownloadsUi(true);
+                                request.setDestinationInExternalPublicDir(YTSMovieBrowser.TORRENT_DOWNLOAD_PATH, movie_id);
+
+//                                long refid = torrentDownloadManager.enqueue(request);
 
                                 return true;
                             }
