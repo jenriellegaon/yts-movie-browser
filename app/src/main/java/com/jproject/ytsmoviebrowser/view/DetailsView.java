@@ -335,13 +335,12 @@ public class DetailsView extends AppCompatActivity implements DetailsContract.Vi
                 showToast("Unavailable");
             } else {
 
-                new MaterialDialog.Builder(getApplicationContext())
+                new MaterialDialog.Builder(this)
                         .title("Download Torrent")
                         .items(torrentQuality)
                         .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                             @Override
-                            public boolean onSelection(MaterialDialog dialog, View view, final int which, CharSequence text) {
-
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 
                                 showToast(torrentUrl.get(which));
                                 return true;
