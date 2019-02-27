@@ -16,6 +16,5 @@ public interface HomeContract {
         void getTopDownloads(String topDownloads);
         void getTopRated(String topRated);
         void getLatestUploads(String latestUploads);
-        void detachAll();
     }
 }

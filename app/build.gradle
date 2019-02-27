@@ -64,4 +64,11 @@ dependencies {
 
     //CIRCULAR IMAGE VIEW
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    //MPETAZZONI TTORRENT
+    implementation 'com.turn:ttorrent-core:1.5'
+
+    //PERMISSION CHECKER
+    implementation 'com.nabinbhandari.android:permissions:3.8'
+
 }

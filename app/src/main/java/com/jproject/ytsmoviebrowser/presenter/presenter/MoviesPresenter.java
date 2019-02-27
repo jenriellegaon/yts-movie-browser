@@ -28,14 +28,14 @@ public class MoviesPresenter implements MoviesContract.Calls {
     //CALLS
     /**********************************************************************************************/
     @Override
-    public void getMoviesBySection(String section) {
-        disposable.add(getMoviesBySectionObservable(section).subscribeWith(getMoviesBySectionObserver()));
+    public void getMoviesBySection(String sort, String genre) {
+        disposable.add(getMoviesBySectionObservable(sort, genre).subscribeWith(getMoviesBySectionObserver()));
     }
 
     @Override
-    public void getNextPageBySection(String sort) {
+    public void getNextPageBySection(String sort, String genre) {
         ++page;
-        disposable.add(getNextPageBySectionObservable(sort).subscribeWith(getNextPageBySectionObserver()));
+        disposable.add(getNextPageBySectionObservable(sort, genre).subscribeWith(getNextPageBySectionObserver()));
     }
     /**********************************************************************************************/
     //CALLS
@@ -43,16 +43,16 @@ public class MoviesPresenter implements MoviesContract.Calls {
 
     //OBSERVABLES
     /**********************************************************************************************/
-    public Observable<ResObj> getMoviesBySectionObservable(String sort) {
+    public Observable<ResObj> getMoviesBySectionObservable(String sort, String genre) {
         return Client.getRetrofit().create(MoviesAPIService.class)
-                .getBySection(sort)
+                .getBySection(sort, genre, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResObj> getNextPageBySectionObservable(String sort) {
+    public Observable<ResObj> getNextPageBySectionObservable(String sort, String genre) {
         return Client.getRetrofit().create(MoviesAPIService.class)
-                .getNextPageBySection(sort, page)
+                .getNextPageBySection(sort, genre, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

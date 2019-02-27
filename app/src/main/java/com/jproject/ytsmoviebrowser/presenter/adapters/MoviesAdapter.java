@@ -1,9 +1,7 @@
 package com.jproject.ytsmoviebrowser.presenter.adapters;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,7 +23,6 @@ import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.MoviesContract;
 import com.jproject.ytsmoviebrowser.model.data.home.Movie;
 import com.jproject.ytsmoviebrowser.presenter.util.GlideApp;
-import com.jproject.ytsmoviebrowser.view.DetailsView;
 
 import java.util.List;
 
@@ -42,12 +39,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private boolean isFooterEnabled = true;
 
     private GridLayoutManager gridLayoutManager;
-
     private List<Movie> movieList;
-
-    String imageUrl;
-    String movie_id;
-    String movie_title;
+    private String imageUrl;
 
     public MoviesAdapter(List<Movie> movieList, RecyclerView rView, Context context) {
 
@@ -109,8 +102,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             Movie movie = movieList.get(position);
             imageUrl = movie.getLargeCoverImage();
-            movie_id = String.valueOf(movie.getId());
-            movie_title = movie.getTitleEnglish();
 
             GlideApp.with(context)
                     .asDrawable()
@@ -133,11 +124,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
                     })
                     .into(((ImageViewHolder) holder).imageView);
-
-            ((ImageViewHolder) holder).imageView.setTransitionName(movie_id);
-            ((ImageViewHolder) holder).imageView.setContentDescription(movie_title);
         }
-
     }
 
     @Override
@@ -175,23 +162,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             super(v);
             imageView = v.findViewById(R.id.movieImage);
-
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @SuppressLint("NewApi")
-                @Override
-                public void onClick(View v) {
-
-                    //Go to movie details view
-                    Activity activity = (Activity) v.getContext();
-                    Intent intent = new Intent(activity, DetailsView.class);
-                    intent.putExtra("movie_id", imageView.getTransitionName());
-                    intent.putExtra("movie_title", String.valueOf(imageView.getContentDescription()));
-                    activity.startActivity(intent);
-                    activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-
-                    Log.d("TITLE", String.valueOf(imageView.getContentDescription()));
-                }
-            });
         }
     }
 }

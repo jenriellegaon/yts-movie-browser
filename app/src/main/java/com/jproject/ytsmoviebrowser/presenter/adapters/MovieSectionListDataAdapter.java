@@ -28,11 +28,12 @@ import io.reactivex.annotations.Nullable;
 
 public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSectionListDataAdapter.SingleItemRowHolder> {
 
-    String movie_id;
-    String movie_title;
-
     private List<Movie> movieList;
     private Context context;
+    private String imageUrl;
+    private String title;
+    private String genres;
+    private String id;
 
     public MovieSectionListDataAdapter(List<Movie> movieList, Context context) {
         this.movieList = movieList;
@@ -50,9 +51,11 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
     public void onBindViewHolder(SingleItemRowHolder holder, int position) {
 
         Movie movie = movieList.get(position);
-        String imageUrl = movie.getLargeCoverImage();
-        movie_id = String.valueOf(movie.getId());
-        movie_title = movie.getTitleEnglish();
+        imageUrl = movie.getLargeCoverImage();
+        title = movie.getTitleEnglish();
+        genres = String.valueOf(movie.getGenres());
+        id = String.valueOf(movie.getId());
+
 
         GlideApp.with(context)
                 .asDrawable()
@@ -76,9 +79,9 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
                 })
                 .into(holder.itemImage);
 
-        holder.itemImage.setTransitionName(movie_id);
-        holder.itemImage.setContentDescription(movie_title);
-
+        holder.movieId = id;
+        holder.movieGenres = genres;
+        holder.movieTitle = title;
     }
 
     @Override
@@ -86,27 +89,31 @@ public class MovieSectionListDataAdapter extends RecyclerView.Adapter<MovieSecti
         return (null != movieList ? movieList.size() : 0);
     }
 
+
     public class SingleItemRowHolder extends RecyclerView.ViewHolder {
         public ImageView itemImage;
+        public String movieId;
+        public String movieTitle;
+        public String movieGenres;
 
         SingleItemRowHolder(View v) {
             super(v);
 
             this.itemImage = v.findViewById(R.id.itemImage);
 
-            v.setOnClickListener(new View.OnClickListener() {
+            itemImage.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(View v) {
 
-                    //Go to movie details view
-                    Activity activity = (Activity) view.getContext();
-                    Intent intent = new Intent(activity, DetailsView.class);
-                    intent.putExtra("movie_id", itemImage.getTransitionName());
-                    intent.putExtra("movie_title", String.valueOf(itemImage.getContentDescription()));
+                    Intent intent = new Intent(context, DetailsView.class);
+                    intent.putExtra("movie_id", movieId);
+                    intent.putExtra("movie_title", movieTitle);
+                    intent.putExtra("genres", movieGenres);
+
+                    Activity activity = (Activity) context;
                     activity.startActivity(intent);
                     activity.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 
-                    Log.d("TITLE", String.valueOf(itemImage.getContentDescription()));
                 }
             });
         }

@@ -15,7 +15,7 @@ public interface DetailsContract {
 
         void showToast(String message);
 
-        void setBgImage(Context context, String imageurl);
+        void setImage(Context context, String imageurl);
     }
 
     interface Calls {

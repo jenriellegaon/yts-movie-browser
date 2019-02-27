@@ -1,5 +1,7 @@
 package com.jproject.ytsmoviebrowser.view;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -13,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.HomeContract;
@@ -22,6 +25,8 @@ import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.MovieDataAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.HomePresenter;
 import com.kennyc.view.MultiStateView;
+import com.nabinbhandari.android.permissions.PermissionHandler;
+import com.nabinbhandari.android.permissions.Permissions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +43,6 @@ public class HomeView extends AppCompatActivity
     NavigationView navigationView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    //    @BindView(R.id.swipy)
-//    SwipyRefreshLayout swipy;
     @BindView(R.id.recycler)
     RecyclerView rView;
     @BindView(R.id.multiStateView)
@@ -56,11 +59,22 @@ public class HomeView extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_view);
 
-        //Bind views
-        ButterKnife.bind(this);
+        Permissions.check(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, null, new PermissionHandler() {
+            @Override
+            public void onGranted() {
+                //Bind views
+                ButterKnife.bind(HomeView.this);
 
-        //Initialize views
-        initViews();
+                //Initialize views
+                initViews();
+            }
+
+            @Override
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                Log.e("PERMISSION:" , "DENIED");
+                finish();
+            }
+        });
 
     }
 
@@ -92,27 +106,19 @@ public class HomeView extends AppCompatActivity
                     public void onClick(View v) {
 
                         state.setViewState(MultiStateView.VIEW_STATE_LOADING);
-
+                        movieDataModel.clear();
+                        homePresenter = new HomePresenter(HomeView.this);
+                        homePresenter.getLatestUploads("date_added");
 
                     }
                 });
-
-        if (state.getViewState() == 1) {
-
-            homePresenter = new HomePresenter(this);
-            homePresenter.detachAll();
-        }
     }
 
     @Override
     public void showError(String error) {
 
         state.setViewState(MultiStateView.VIEW_STATE_ERROR);
-        homePresenter = new HomePresenter(this);
-        homePresenter.detachAll();
-
         Log.d("RESPONSE ERROR! ", "Response error");
-
     }
 
     @Override
@@ -213,8 +219,6 @@ public class HomeView extends AppCompatActivity
         }
     }
 
-
-
     @Override
     public void onStateChanged(@MultiStateView.ViewState int viewState) {
         Log.v("HomeView", " View State: " + viewState);
@@ -227,6 +231,7 @@ public class HomeView extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            finishAndRemoveTask();
         }
     }
 
@@ -238,10 +243,12 @@ public class HomeView extends AppCompatActivity
 
         if (id == R.id.nav_home) {
 
-            //Loads Sectioned Movies
-            movieDataModel.clear();
-            homePresenter = new HomePresenter(this);
-            homePresenter.getLatestUploads("date_added");
+            if (!navigationView.getMenu().findItem(R.id.nav_home).isChecked()) {
+                //Loads Sectioned Movies
+                movieDataModel.clear();
+                homePresenter = new HomePresenter(this);
+                homePresenter.getLatestUploads("date_added");
+            }
 
         } else if (id == R.id.nav_about) {
 
@@ -250,4 +257,11 @@ public class HomeView extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    public void showMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+
 }

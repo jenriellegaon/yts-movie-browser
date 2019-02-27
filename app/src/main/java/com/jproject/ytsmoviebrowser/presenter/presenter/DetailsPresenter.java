@@ -33,7 +33,6 @@ public class DetailsPresenter implements DetailsContract.Calls {
     }
 
     //OBSERVABLES
-
     /**********************************************************************************************/
     public Observable<ResObj> getMovieDetailsObservable(String movie_id) {
         return Client.getRetrofit().create(DetailsAPIService.class)
@@ -46,7 +45,6 @@ public class DetailsPresenter implements DetailsContract.Calls {
 
 
     //OBSERVERS
-
     /**********************************************************************************************/
     public DisposableObserver<ResObj> getMovieDetailsObserver() {
         return new DisposableObserver<ResObj>() {
