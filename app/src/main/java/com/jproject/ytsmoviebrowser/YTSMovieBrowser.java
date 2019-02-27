@@ -9,6 +9,6 @@ public class YTSMovieBrowser extends Application {
     public static final String DEFAULT_HOME = "/api/v2/list_movies.json?";
     public static final String DEFAULT_HOME_LIMITED = "/api/v2/list_movies.json?&limit=5";
 
-    public static final String TORRENT_DOWNLOAD_PATH = "/Downloads/YTS Movie Browser/Torrents";
+    public static final String TORRENT_DOWNLOAD_PATH = "/Downloads/YTSMovieBrowser/Torrents";
 
 }
