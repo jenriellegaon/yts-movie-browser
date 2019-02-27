@@ -1,5 +1,7 @@
 package com.jproject.ytsmoviebrowser.view;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -13,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.jproject.ytsmoviebrowser.R;
 import com.jproject.ytsmoviebrowser.contract.HomeContract;
@@ -22,6 +25,8 @@ import com.jproject.ytsmoviebrowser.model.data.home.ResObj;
 import com.jproject.ytsmoviebrowser.presenter.adapters.MovieDataAdapter;
 import com.jproject.ytsmoviebrowser.presenter.presenter.HomePresenter;
 import com.kennyc.view.MultiStateView;
+import com.nabinbhandari.android.permissions.PermissionHandler;
+import com.nabinbhandari.android.permissions.Permissions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,11 +59,22 @@ public class HomeView extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_view);
 
-        //Bind views
-        ButterKnife.bind(this);
+        Permissions.check(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, null, new PermissionHandler() {
+            @Override
+            public void onGranted() {
+                //Bind views
+                ButterKnife.bind(HomeView.this);
 
-        //Initialize views
-        initViews();
+                //Initialize views
+                initViews();
+            }
+
+            @Override
+            public void onDenied(Context context, ArrayList<String> deniedPermissions) {
+                Log.e("PERMISSION:" , "DENIED");
+                finish();
+            }
+        });
 
     }
 
@@ -219,11 +235,6 @@ public class HomeView extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -246,5 +257,11 @@ public class HomeView extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    public void showMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
 
 }
